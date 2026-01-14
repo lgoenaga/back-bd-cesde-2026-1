@@ -1,0 +1,1054 @@
+{
+  "info": {
+    "name": "Student Information System API",
+    "description": "REST API for Student Information System - CESDE 2026",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080/api",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            }
+          }
+        },
+        {
+          "name": "Ping",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health/ping",
+              "host": ["{{base_url}}"],
+              "path": ["health", "ping"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Students",
+      "item": [
+        {
+          "name": "Get All Students",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/students",
+              "host": ["{{base_url}}"],
+              "path": ["students"]
+            }
+          }
+        },
+        {
+          "name": "Get Active Students",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/students/active",
+              "host": ["{{base_url}}"],
+              "path": ["students", "active"]
+            }
+          }
+        },
+        {
+          "name": "Get Student by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/students/1",
+              "host": ["{{base_url}}"],
+              "path": ["students", "1"]
+            }
+          }
+        },
+        {
+          "name": "Search Students by Name",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/students/search?name=Juan",
+              "host": ["{{base_url}}"],
+              "path": ["students", "search"],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "Juan"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Student",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identificationType\": \"CC\",\n  \"identificationNumber\": \"1234567890\",\n  \"firstName\": \"Juan\",\n  \"lastName\": \"Pérez\",\n  \"email\": \"juan.perez@example.com\",\n  \"phone\": \"3001234567\",\n  \"mobile\": \"3001234567\",\n  \"address\": \"Calle 123 #45-67\",\n  \"dateOfBirth\": \"2000-01-15\",\n  \"enrollmentDate\": \"2024-01-10\",\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/students",
+              "host": ["{{base_url}}"],
+              "path": ["students"]
+            }
+          }
+        },
+        {
+          "name": "Update Student",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identificationType\": \"CC\",\n  \"identificationNumber\": \"1234567890\",\n  \"firstName\": \"Juan Carlos\",\n  \"lastName\": \"Pérez García\",\n  \"email\": \"juan.perez@example.com\",\n  \"phone\": \"3001234567\",\n  \"mobile\": \"3001234567\",\n  \"address\": \"Calle 123 #45-67\",\n  \"dateOfBirth\": \"2000-01-15\",\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/students/1",
+              "host": ["{{base_url}}"],
+              "path": ["students", "1"]
+            }
+          }
+        },
+        {
+          "name": "Deactivate Student",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/students/1/deactivate",
+              "host": ["{{base_url}}"],
+              "path": ["students", "1", "deactivate"]
+            }
+          }
+        },
+        {
+          "name": "Delete Student",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/students/1",
+              "host": ["{{base_url}}"],
+              "path": ["students", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Professors",
+      "item": [
+        {
+          "name": "Get All Professors",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/professors",
+              "host": ["{{base_url}}"],
+              "path": ["professors"]
+            }
+          }
+        },
+        {
+          "name": "Get Active Professors",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/professors/active",
+              "host": ["{{base_url}}"],
+              "path": ["professors", "active"]
+            }
+          }
+        },
+        {
+          "name": "Get Professor by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/professors/1",
+              "host": ["{{base_url}}"],
+              "path": ["professors", "1"]
+            }
+          }
+        },
+        {
+          "name": "Create Professor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identificationType\": \"CC\",\n  \"identificationNumber\": \"9876543210\",\n  \"firstName\": \"María\",\n  \"lastName\": \"González\",\n  \"email\": \"maria.gonzalez@cesde.edu.co\",\n  \"phone\": \"3009876543\",\n  \"mobile\": \"3009876543\",\n  \"address\": \"Carrera 50 #30-20\",\n  \"dateOfBirth\": \"1980-05-20\",\n  \"hireDate\": \"2020-01-15\",\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/professors",
+              "host": ["{{base_url}}"],
+              "path": ["professors"]
+            }
+          }
+        },
+        {
+          "name": "Update Professor",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identificationType\": \"CC\",\n  \"identificationNumber\": \"9876543210\",\n  \"firstName\": \"María Teresa\",\n  \"lastName\": \"González\",\n  \"email\": \"maria.gonzalez@cesde.edu.co\",\n  \"phone\": \"3009876543\",\n  \"mobile\": \"3009876543\",\n  \"address\": \"Carrera 50 #30-20\",\n  \"dateOfBirth\": \"1980-05-20\",\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/professors/1",
+              "host": ["{{base_url}}"],
+              "path": ["professors", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete Professor",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/professors/1",
+              "host": ["{{base_url}}"],
+              "path": ["professors", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Courses",
+      "item": [
+        {
+          "name": "Get All Courses",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/courses",
+              "host": ["{{base_url}}"],
+              "path": ["courses"]
+            }
+          }
+        },
+        {
+          "name": "Get Active Courses",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/courses/active",
+              "host": ["{{base_url}}"],
+              "path": ["courses", "active"]
+            }
+          }
+        },
+        {
+          "name": "Get Course by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/courses/1",
+              "host": ["{{base_url}}"],
+              "path": ["courses", "1"]
+            }
+          }
+        },
+        {
+          "name": "Get Course by Code",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/courses/code/DEV-101",
+              "host": ["{{base_url}}"],
+              "path": ["courses", "code", "DEV-101"]
+            }
+          }
+        },
+        {
+          "name": "Create Course",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Desarrollo de Software\",\n  \"code\": \"DEV-101\",\n  \"description\": \"Curso completo de desarrollo de software con metodologías ágiles\",\n  \"totalLevels\": 4,\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/courses",
+              "host": ["{{base_url}}"],
+              "path": ["courses"]
+            }
+          }
+        },
+        {
+          "name": "Update Course",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Desarrollo de Software Full Stack\",\n  \"code\": \"DEV-101\",\n  \"description\": \"Curso completo de desarrollo de software full stack con metodologías ágiles\",\n  \"totalLevels\": 5,\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/courses/1",
+              "host": ["{{base_url}}"],
+              "path": ["courses", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete Course",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/courses/1",
+              "host": ["{{base_url}}"],
+              "path": ["courses", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Grades",
+      "item": [
+        {
+          "name": "Get All Grades",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/grades",
+              "host": ["{{base_url}}"],
+              "path": ["grades"]
+            }
+          }
+        },
+        {
+          "name": "Get Grade By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/grades/1",
+              "host": ["{{base_url}}"],
+              "path": ["grades", "1"]
+            }
+          }
+        },
+        {
+          "name": "Get Grades By Student",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/grades/student/1",
+              "host": ["{{base_url}}"],
+              "path": ["grades", "student", "1"]
+            }
+          }
+        },
+        {
+          "name": "Create Grade",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subjectEnrollmentId\": 1,\n  \"gradePeriodId\": 1,\n  \"gradeComponentId\": 1,\n  \"gradeValue\": 4.5,\n  \"assignmentDate\": \"2026-01-13\",\n  \"comments\": \"Excelente trabajo\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/grades",
+              "host": ["{{base_url}}"],
+              "path": ["grades"]
+            }
+          }
+        },
+        {
+          "name": "Update Grade",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"gradeValue\": 4.8,\n  \"comments\": \"Mejoró significativamente\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/grades/1",
+              "host": ["{{base_url}}"],
+              "path": ["grades", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete Grade",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/grades/1",
+              "host": ["{{base_url}}"],
+              "path": ["grades", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Attendance",
+      "item": [
+        {
+          "name": "Get All Attendance",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/attendance",
+              "host": ["{{base_url}}"],
+              "path": ["attendance"]
+            }
+          }
+        },
+        {
+          "name": "Get Attendance By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/attendance/1",
+              "host": ["{{base_url}}"],
+              "path": ["attendance", "1"]
+            }
+          }
+        },
+        {
+          "name": "Get Attendance By Student",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/attendance/student/1",
+              "host": ["{{base_url}}"],
+              "path": ["attendance", "student", "1"]
+            }
+          }
+        },
+        {
+          "name": "Get Attendance By Session",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/attendance/session/1",
+              "host": ["{{base_url}}"],
+              "path": ["attendance", "session", "1"]
+            }
+          }
+        },
+        {
+          "name": "Get Attendance By Date Range",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/attendance/range?startDate=2026-01-01&endDate=2026-01-31",
+              "host": ["{{base_url}}"],
+              "path": ["attendance", "range"],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "2026-01-01"
+                },
+                {
+                  "key": "endDate",
+                  "value": "2026-01-31"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Attendance",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subjectEnrollmentId\": 1,\n  \"classSessionId\": 1,\n  \"assignmentDate\": \"2026-01-13\",\n  \"status\": \"PRESENTE\",\n  \"isExcused\": false,\n  \"notes\": \"Asistió puntualmente\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/attendance",
+              "host": ["{{base_url}}"],
+              "path": ["attendance"]
+            }
+          }
+        },
+        {
+          "name": "Update Attendance",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"TARDANZA\",\n  \"notes\": \"Llegó 15 minutos tarde\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/attendance/1",
+              "host": ["{{base_url}}"],
+              "path": ["attendance", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete Attendance",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/attendance/1",
+              "host": ["{{base_url}}"],
+              "path": ["attendance", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users",
+              "host": ["{{base_url}}"],
+              "path": ["users"]
+            }
+          }
+        },
+        {
+          "name": "Get Active Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/active",
+              "host": ["{{base_url}}"],
+              "path": ["users", "active"]
+            }
+          }
+        },
+        {
+          "name": "Get User by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/1",
+              "host": ["{{base_url}}"],
+              "path": ["users", "1"]
+            }
+          }
+        },
+        {
+          "name": "Get User by Username",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/username/admin",
+              "host": ["{{base_url}}"],
+              "path": ["users", "username", "admin"]
+            }
+          }
+        },
+        {
+          "name": "Get User by Email",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/email/admin@cesde.edu.co",
+              "host": ["{{base_url}}"],
+              "path": ["users", "email", "admin@cesde.edu.co"]
+            }
+          }
+        },
+        {
+          "name": "Search Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/search?username=admin",
+              "host": ["{{base_url}}"],
+              "path": ["users", "search"],
+              "query": [{"key": "username", "value": "admin"}]
+            }
+          }
+        },
+        {
+          "name": "Get Users by Role",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/role/Administrador",
+              "host": ["{{base_url}}"],
+              "path": ["users", "role", "Administrador"]
+            }
+          }
+        },
+        {
+          "name": "Count Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/count",
+              "host": ["{{base_url}}"],
+              "path": ["users", "count"]
+            }
+          }
+        },
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"newuser\",\n  \"password\": \"password123\",\n  \"email\": \"newuser@cesde.edu.co\",\n  \"isActive\": true,\n  \"roleIds\": [2]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users",
+              "host": ["{{base_url}}"],
+              "path": ["users"]
+            }
+          }
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"updateduser\",\n  \"email\": \"updated@cesde.edu.co\",\n  \"isActive\": true,\n  \"roleIds\": [2]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/1",
+              "host": ["{{base_url}}"],
+              "path": ["users", "1"]
+            }
+          }
+        },
+        {
+          "name": "Deactivate User",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/1/deactivate",
+              "host": ["{{base_url}}"],
+              "path": ["users", "1", "deactivate"]
+            }
+          }
+        },
+        {
+          "name": "Assign Role to User",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/1/roles/2",
+              "host": ["{{base_url}}"],
+              "path": ["users", "1", "roles", "2"]
+            }
+          }
+        },
+        {
+          "name": "Remove Role from User",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/1/roles/2",
+              "host": ["{{base_url}}"],
+              "path": ["users", "1", "roles", "2"]
+            }
+          }
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/1",
+              "host": ["{{base_url}}"],
+              "path": ["users", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Roles",
+      "item": [
+        {
+          "name": "Get All Roles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/roles",
+              "host": ["{{base_url}}"],
+              "path": ["roles"]
+            }
+          }
+        },
+        {
+          "name": "Get Enabled Roles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/roles/enabled",
+              "host": ["{{base_url}}"],
+              "path": ["roles", "enabled"]
+            }
+          }
+        },
+        {
+          "name": "Get Role by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/roles/1",
+              "host": ["{{base_url}}"],
+              "path": ["roles", "1"]
+            }
+          }
+        },
+        {
+          "name": "Get Role by Name",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/roles/name/Administrador",
+              "host": ["{{base_url}}"],
+              "path": ["roles", "name", "Administrador"]
+            }
+          }
+        },
+        {
+          "name": "Search Roles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/roles/search?name=Admin",
+              "host": ["{{base_url}}"],
+              "path": ["roles", "search"],
+              "query": [{"key": "name", "value": "Admin"}]
+            }
+          }
+        },
+        {
+          "name": "Count Roles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/roles/count",
+              "host": ["{{base_url}}"],
+              "path": ["roles", "count"]
+            }
+          }
+        },
+        {
+          "name": "Get Roles with User Count",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/roles/with-user-count",
+              "host": ["{{base_url}}"],
+              "path": ["roles", "with-user-count"]
+            }
+          }
+        },
+        {
+          "name": "Count Users by Role",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/roles/1/user-count",
+              "host": ["{{base_url}}"],
+              "path": ["roles", "1", "user-count"]
+            }
+          }
+        },
+        {
+          "name": "Create Role",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Coordinador\",\n  \"description\": \"Coordinador académico\",\n  \"enabled\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/roles",
+              "host": ["{{base_url}}"],
+              "path": ["roles"]
+            }
+          }
+        },
+        {
+          "name": "Update Role",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Coordinador\",\n  \"description\": \"Coordinador académico actualizado\",\n  \"enabled\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/roles/1",
+              "host": ["{{base_url}}"],
+              "path": ["roles", "1"]
+            }
+          }
+        },
+        {
+          "name": "Toggle Role Status",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/roles/1/toggle-status",
+              "host": ["{{base_url}}"],
+              "path": ["roles", "1", "toggle-status"]
+            }
+          }
+        },
+        {
+          "name": "Delete Role",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/roles/1",
+              "host": ["{{base_url}}"],
+              "path": ["roles", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "User-Roles",
+      "item": [
+        {
+          "name": "Get All User-Role Assignments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/user-roles",
+              "host": ["{{base_url}}"],
+              "path": ["user-roles"]
+            }
+          }
+        },
+        {
+          "name": "Get Roles by User ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/user-roles/user/1",
+              "host": ["{{base_url}}"],
+              "path": ["user-roles", "user", "1"]
+            }
+          }
+        },
+        {
+          "name": "Get Users by Role ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/user-roles/role/1",
+              "host": ["{{base_url}}"],
+              "path": ["user-roles", "role", "1"]
+            }
+          }
+        },
+        {
+          "name": "Get Roles by Username",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/user-roles/username/admin",
+              "host": ["{{base_url}}"],
+              "path": ["user-roles", "username", "admin"]
+            }
+          }
+        },
+        {
+          "name": "Get Users by Role Name",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/user-roles/role-name/Administrador",
+              "host": ["{{base_url}}"],
+              "path": ["user-roles", "role-name", "Administrador"]
+            }
+          }
+        },
+        {
+          "name": "Get Recent Assignments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/user-roles/recent?days=7",
+              "host": ["{{base_url}}"],
+              "path": ["user-roles", "recent"],
+              "query": [{"key": "days", "value": "7"}]
+            }
+          }
+        },
+        {
+          "name": "Get Assignments by Admin",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/user-roles/assigned-by/1",
+              "host": ["{{base_url}}"],
+              "path": ["user-roles", "assigned-by", "1"]
+            }
+          }
+        },
+        {
+          "name": "Assign Role to User",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1,\n  \"roleId\": 2,\n  \"assignedByUserId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/user-roles",
+              "host": ["{{base_url}}"],
+              "path": ["user-roles"]
+            }
+          }
+        },
+        {
+          "name": "Remove Role from User",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/user-roles/user/1/role/2",
+              "host": ["{{base_url}}"],
+              "path": ["user-roles", "user", "1", "role", "2"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

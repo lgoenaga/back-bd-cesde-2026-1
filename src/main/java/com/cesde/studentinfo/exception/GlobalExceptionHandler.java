@@ -96,6 +96,19 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Maneja NoResourceFoundException (Spring 6.1+)
+     * Cuando una ruta no encuentra un recurso estático ni un controller
+     */
+    @ExceptionHandler(org.springframework.web.servlet.resource.NoResourceFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleNoResourceFoundException(
+            org.springframework.web.servlet.resource.NoResourceFoundException ex) {
+        log.error("Resource not found: {}", ex.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.error("Resource not found: " + ex.getMessage()));
+    }
+
+    /**
      * Maneja todas las demás excepciones
      */
     @ExceptionHandler(Exception.class)

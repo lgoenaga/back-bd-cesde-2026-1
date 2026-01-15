@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  * Controller para gestión de inscripciones
  */
 @RestController
-@RequestMapping("/enrollments")
+@RequestMapping("/course-enrollments")
 @RequiredArgsConstructor
 @Slf4j
 public class CourseEnrollmentController {
@@ -38,7 +38,7 @@ public class CourseEnrollmentController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<CourseEnrollmentResponseDTO>>> getAllEnrollments() {
-        log.info("GET /enrollments - Fetching all enrollments");
+        log.info("GET /course-enrollments - Fetching all enrollments");
         List<CourseEnrollment> enrollments = enrollmentService.getAllEnrollments();
         List<CourseEnrollmentResponseDTO> response = enrollments.stream()
                 .map(CourseEnrollmentResponseDTO::fromEntity)
@@ -48,7 +48,7 @@ public class CourseEnrollmentController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<CourseEnrollmentResponseDTO>> getEnrollmentById(@PathVariable Long id) {
-        log.info("GET /enrollments/{} - Fetching enrollment by ID", id);
+        log.info("GET /course-enrollments/{} - Fetching enrollment by ID", id);
         CourseEnrollment enrollment = enrollmentService.getEnrollmentById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("CourseEnrollment", id));
         return ResponseEntity.ok(ApiResponse.success(CourseEnrollmentResponseDTO.fromEntity(enrollment)));
@@ -57,7 +57,7 @@ public class CourseEnrollmentController {
     @GetMapping("/student/{studentId}")
     public ResponseEntity<ApiResponse<List<CourseEnrollmentResponseDTO>>> getEnrollmentsByStudent(
             @PathVariable Long studentId) {
-        log.info("GET /enrollments/student/{} - Fetching enrollments by student", studentId);
+        log.info("GET /course-enrollments/student/{} - Fetching enrollments by student", studentId);
         List<CourseEnrollment> enrollments = enrollmentService.getEnrollmentsByStudentId(studentId);
         List<CourseEnrollmentResponseDTO> response = enrollments.stream()
                 .map(CourseEnrollmentResponseDTO::fromEntity)
@@ -68,7 +68,7 @@ public class CourseEnrollmentController {
     @GetMapping("/course/{courseId}")
     public ResponseEntity<ApiResponse<List<CourseEnrollmentResponseDTO>>> getEnrollmentsByCourse(
             @PathVariable Long courseId) {
-        log.info("GET /enrollments/course/{} - Fetching enrollments by course", courseId);
+        log.info("GET /course-enrollments/course/{} - Fetching enrollments by course", courseId);
         List<CourseEnrollment> enrollments = enrollmentService.getEnrollmentsByCourseId(courseId);
         List<CourseEnrollmentResponseDTO> response = enrollments.stream()
                 .map(CourseEnrollmentResponseDTO::fromEntity)
@@ -79,7 +79,7 @@ public class CourseEnrollmentController {
     @GetMapping("/period/{periodId}")
     public ResponseEntity<ApiResponse<List<CourseEnrollmentResponseDTO>>> getEnrollmentsByPeriod(
             @PathVariable Long periodId) {
-        log.info("GET /enrollments/period/{} - Fetching enrollments by period", periodId);
+        log.info("GET /course-enrollments/period/{} - Fetching enrollments by period", periodId);
         List<CourseEnrollment> enrollments = enrollmentService.getEnrollmentsByPeriodId(periodId);
         List<CourseEnrollmentResponseDTO> response = enrollments.stream()
                 .map(CourseEnrollmentResponseDTO::fromEntity)
@@ -90,7 +90,7 @@ public class CourseEnrollmentController {
     @PostMapping
     public ResponseEntity<ApiResponse<CourseEnrollmentResponseDTO>> createEnrollment(
             @Valid @RequestBody CourseEnrollmentDTO enrollmentDTO) {
-        log.info("POST /enrollments - Creating new enrollment");
+        log.info("POST /course-enrollments - Creating new enrollment");
 
         Student student = studentRepository.findById(enrollmentDTO.getStudentId())
                 .orElseThrow(() -> new ResourceNotFoundException("Student", enrollmentDTO.getStudentId()));
@@ -120,7 +120,7 @@ public class CourseEnrollmentController {
     public ResponseEntity<ApiResponse<CourseEnrollmentResponseDTO>> updateEnrollmentStatus(
             @PathVariable Long id,
             @RequestParam CourseEnrollment.EnrollmentStatus status) {
-        log.info("PATCH /enrollments/{}/status - Updating status to: {}", id, status);
+        log.info("PATCH /course-enrollments/{}/status - Updating status to: {}", id, status);
         CourseEnrollment updated = enrollmentService.updateEnrollmentStatus(id, status);
         return ResponseEntity.ok(ApiResponse.success(CourseEnrollmentResponseDTO.fromEntity(updated),
                 "Enrollment status updated successfully"));
@@ -130,7 +130,7 @@ public class CourseEnrollmentController {
     public ResponseEntity<ApiResponse<CourseEnrollmentResponseDTO>> updateEnrollment(
             @PathVariable Long id,
             @Valid @RequestBody CourseEnrollmentDTO dto) {
-        log.info("PUT /enrollments/{} - Updating enrollment", id);
+        log.info("PUT /course-enrollments/{} - Updating enrollment", id);
 
         CourseEnrollment updates = CourseEnrollment.builder()
                 .enrollmentStatus(dto.getEnrollmentStatus())
@@ -144,14 +144,14 @@ public class CourseEnrollmentController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteEnrollment(@PathVariable Long id) {
-        log.info("DELETE /enrollments/{} - Deleting enrollment", id);
+        log.info("DELETE /course-enrollments/{} - Deleting enrollment", id);
         enrollmentService.deleteEnrollment(id);
         return ResponseEntity.ok(ApiResponse.success("Enrollment deleted successfully"));
     }
 
     @GetMapping("/count")
     public ResponseEntity<ApiResponse<Long>> countEnrollments() {
-        log.info("GET /enrollments/count - Counting enrollments");
+        log.info("GET /course-enrollments/count - Counting enrollments");
         long count = enrollmentService.countEnrollments();
         return ResponseEntity.ok(ApiResponse.success(count, "Count retrieved successfully"));
     }

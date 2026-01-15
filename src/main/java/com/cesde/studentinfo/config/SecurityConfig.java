@@ -83,8 +83,8 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 // Endpoints públicos
-                .requestMatchers("/auth/**").permitAll()
-                .requestMatchers("/health").permitAll()
+                .requestMatchers("/auth/**", "/api/auth/**").permitAll()
+                .requestMatchers("/health", "/api/health").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                 // Todos los demás endpoints requieren autenticación

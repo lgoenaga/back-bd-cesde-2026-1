@@ -130,7 +130,7 @@ public class SubjectService {
 
     @Transactional(readOnly = true)
     public Page<Subject> getAllSubjectsPaginated(Pageable pageable) {
-        return subjectRepository.findAll(pageable);
+        return subjectRepository.findAllWithLevel(pageable);
     }
 
     @Transactional(readOnly = true)

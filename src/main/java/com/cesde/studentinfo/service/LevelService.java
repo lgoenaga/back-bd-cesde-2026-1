@@ -31,7 +31,7 @@ public class LevelService {
     @Transactional(readOnly = true)
     public List<Level> getAllLevels() {
         log.info("Fetching all levels");
-        return levelRepository.findAll();
+        return levelRepository.findAllWithCourse();
     }
 
     @Transactional(readOnly = true)
@@ -98,7 +98,7 @@ public class LevelService {
 
     @Transactional(readOnly = true)
     public Page<Level> getAllLevelsPaginated(Pageable pageable) {
-        return levelRepository.findAll(pageable);
+        return levelRepository.findAllWithCourse(pageable);
     }
 
     @Transactional(readOnly = true)

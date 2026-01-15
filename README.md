@@ -16,6 +16,34 @@ Gestiona: Estudiantes, Profesores, Cursos, Niveles, Materias, Períodos Académi
 
 ---
 
+## 📱 IMPORTANTE: Nota Para Desarrolladores Frontend
+
+> ### ⚠️ Paginación Disponible en el Backend
+> 
+> **El backend proporciona DOS tipos de endpoints:**
+> 
+> | Tipo | Endpoint | Respuesta | Uso Recomendado |
+> |------|----------|-----------|-----------------|
+> | **Sin paginación** | `/students` | Lista completa: `data: [...]` | Dropdowns, selects pequeños |
+> | **Con paginación** | `/students/paged` | PagedResponse: `data: { content: [...], page, totalElements, ... }` | ✅ **Tablas y listados** |
+> 
+> **✅ RECOMENDACIÓN:** Usa siempre los endpoints **`/paged`** para tablas en el frontend.
+> 
+> **📊 Disponibles:** 33 endpoints paginados (Students, Professors, Courses, Levels, Subjects, Academic Periods, Users, Roles)
+> 
+> **Ejemplo:**
+> ```bash
+> # Sin paginación - retorna TODOS los estudiantes
+> GET /api/students
+> 
+> # Con paginación - retorna 20 estudiantes (recomendado)
+> GET /api/students/paged?page=0&size=20&sort=lastName,asc
+> ```
+> 
+> **📖 Documentación completa:** Ver sección [Paginación](#-paginación) más abajo.
+
+---
+
 ## 🚀 Inicio Rápido
 
 ```bash
@@ -846,6 +874,70 @@ curl -X POST http://localhost:8080/api/attendance \
 
 ## 📄 Paginación
 
+### ⚠️ Información Importante para el Frontend
+
+**El backend proporciona DOS tipos de endpoints para cada recurso:**
+
+#### 1. Endpoints SIN Paginación (Retornan lista completa)
+
+**Endpoint:** `/api/students`  
+**Respuesta:**
+```json
+{
+  "success": true,
+  "message": "Students retrieved successfully",
+  "data": [
+    { "id": 1, "firstName": "Juan", ... },
+    { "id": 2, "firstName": "María", ... }
+    // ... TODOS los registros
+  ]
+}
+```
+
+**⚠️ Advertencia:** Retorna TODOS los registros de la base de datos. Puede ser lento con grandes volúmenes.
+
+**Cuándo usar:** Solo para dropdowns, selects pequeños o cuando realmente necesitas todos los registros.
+
+---
+
+#### 2. Endpoints CON Paginación (✅ Recomendado)
+
+**Endpoint:** `/api/students/paged?page=0&size=20&sort=lastName,asc`  
+**Respuesta:**
+```json
+{
+  "success": true,
+  "message": "Students retrieved successfully",
+  "data": {
+    "content": [
+      { "id": 1, "firstName": "Juan", ... }
+      // ... hasta 20 registros
+    ],
+    "page": 0,
+    "size": 20,
+    "totalElements": 500,
+    "totalPages": 25,
+    "first": true,
+    "last": false,
+    "empty": false,
+    "sort": {
+      "sorted": true,
+      "sortBy": "lastName",
+      "direction": "ASC"
+    }
+  }
+}
+```
+
+**✅ Ventajas:** 
+- Solo trae los registros de la página solicitada
+- Incluye metadatos completos para implementar UI de paginación
+- Mejor performance y experiencia de usuario
+
+**Cuándo usar:** Siempre que muestres una tabla o listado de datos.
+
+---
+
 ### Características de Paginación
 
 La API implementa **paginación completa** en todos los endpoints de listado para mejorar el rendimiento y la experiencia del usuario.
@@ -854,16 +946,16 @@ La API implementa **paginación completa** en todos los endpoints de listado par
 
 Todos los endpoints principales tienen versiones paginadas accesibles agregando `/paged` al path:
 
-| Entidad | Endpoint Base | Endpoint Paginado |
-|---------|---------------|-------------------|
-| **Students** | `/students` | `/students/paged` |
-| **Professors** | `/professors` | `/professors/paged` |
-| **Courses** | `/courses` | `/courses/paged` |
-| **Levels** | `/levels` | `/levels/paged` |
-| **Subjects** | `/subjects` | `/subjects/paged` |
-| **Academic Periods** | `/academic-periods` | `/academic-periods/paged` |
-| **Users** | `/users` | `/users/paged` |
-| **Roles** | `/roles` | `/roles/paged` |
+| Entidad | ❌ Sin Paginación (Lista completa) | ✅ Con Paginación (Recomendado) |
+|---------|-----------------------------------|--------------------------------|
+| **Students** | `GET /students` | `GET /students/paged` |
+| **Professors** | `GET /professors` | `GET /professors/paged` |
+| **Courses** | `GET /courses` | `GET /courses/paged` |
+| **Levels** | `GET /levels` | `GET /levels/paged` |
+| **Subjects** | `GET /subjects` | `GET /subjects/paged` |
+| **Academic Periods** | `GET /academic-periods` | `GET /academic-periods/paged` |
+| **Users** | `GET /users` | `GET /users/paged` |
+| **Roles** | `GET /roles` | `GET /roles/paged` |
 
 #### Parámetros de Paginación
 

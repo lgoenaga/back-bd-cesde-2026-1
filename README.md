@@ -54,9 +54,13 @@ Respuesta esperada:
 | Java | 17 | Lenguaje base |
 | Spring Boot | 3.2.1 | Framework principal |
 | Spring Data JPA | 3.2.1 | Persistencia de datos |
+| Spring Security | 6.2.1 | Autenticación y autorización |
+| JWT (JSON Web Tokens) | 0.12.3 | Tokens de autenticación |
+| BCrypt | Built-in | Encriptación de passwords |
 | MySQL | 8.x | Base de datos |
 | Lombok | Latest | Reducción de boilerplate |
 | Maven | 3.6+ | Gestión de dependencias |
+| CORS | Built-in | Cross-Origin Resource Sharing |
 
 ---
 
@@ -216,15 +220,211 @@ El script `BASEDATOS.sql` crea usuarios de prueba (cambiar en producción):
 - El `CustomUserDetailsService` carga usuarios y roles automáticamente
 - Cuando se active autenticación, solo hay que cambiar `SecurityConfig`
 
-**Opciones de Autenticación Futuras:**
+### 🔐 Autenticación JWT (Implementado)
 
-Cuando se requiera activar autenticación, hay varias opciones disponibles:
+La API utiliza **JWT (JSON Web Tokens)** para autenticación y autorización.
 
-1. **HTTP Basic Authentication** - Simple, para desarrollo o APIs internas
-2. **JWT (JSON Web Tokens)** - Recomendado para aplicaciones frontend modernas
-3. **Session-based** - Tradicional, con cookies de sesión
+#### Configuración JWT
 
-El sistema ya está preparado: solo requiere cambiar la configuración de `permitAll()` a `authenticated()` en `SecurityConfig.java` y configurar el método de autenticación deseado.
+Variables de entorno en `.env`:
+
+```properties
+JWT_SECRET=YourVerySecureSecretKeyForJWTTokenGenerationMinimum256BitsRequired2026CesdeStudentInformationSystemAPI
+JWT_EXPIRATION=86400000  # 24 horas en milisegundos
+```
+
+⚠️ **Importante:** Cambiar `JWT_SECRET` en producción. Debe ser una cadena de al menos 256 bits.
+
+#### Endpoints de Autenticación
+
+##### 1. Login (Iniciar Sesión)
+
+```http
+POST /api/auth/login
+Content-Type: application/json
+
+{
+  "usernameOrEmail": "admin",
+  "password": "Lagp2022"
+}
+```
+
+**Respuesta exitosa:**
+```json
+{
+  "success": true,
+  "message": "Login exitoso",
+  "data": {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "type": "Bearer",
+    "userId": 1,
+    "username": "admin",
+    "email": "admin@cesde.edu.co",
+    "roles": ["Administrador"],
+    "expiresIn": 86400000
+  }
+}
+```
+
+##### 2. Registro (Crear Usuario)
+
+```http
+POST /api/auth/register
+Content-Type: application/json
+
+{
+  "username": "nuevo_usuario",
+  "password": "Password123",
+  "email": "usuario@example.com",
+  "roleIds": [2]
+}
+```
+
+##### 3. Validar Token
+
+```http
+POST /api/auth/validate-token
+Content-Type: application/json
+
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+##### 4. Refrescar Token
+
+```http
+POST /api/auth/refresh-token
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+#### Uso del Token
+
+Una vez obtenido el token del endpoint `/auth/login`, incluirlo en el header `Authorization` de todas las peticiones:
+
+```http
+GET /api/students
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+#### Payload del JWT
+
+El token incluye la siguiente información:
+
+```json
+{
+  "sub": "username",
+  "userId": 1,
+  "roles": ["Administrador", "Usuario"],
+  "iat": 1642598400,
+  "exp": 1642684800
+}
+```
+
+#### Configuración de Seguridad
+
+Los siguientes endpoints son públicos (no requieren autenticación):
+
+- `POST /api/auth/login` - Iniciar sesión
+- `POST /api/auth/register` - Registro de usuario
+- `GET /api/health` - Estado de la API
+
+Todos los demás endpoints requieren un token JWT válido.
+
+#### Manejo de Errores
+
+**Token inválido o expirado:**
+```json
+{
+  "success": false,
+  "message": "Token inválido o expirado",
+  "timestamp": "2026-01-15T10:30:00"
+}
+```
+
+**Credenciales incorrectas:**
+```json
+{
+  "success": false,
+  "message": "Credenciales inválidas",
+  "timestamp": "2026-01-15T10:30:00"
+}
+```
+
+---
+
+### 🌐 Configuración CORS
+
+La API tiene CORS (Cross-Origin Resource Sharing) configurado para permitir peticiones desde diferentes orígenes.
+
+#### Configuración Actual
+
+**Archivo:** `CorsConfig.java`
+
+```java
+@Bean
+public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration config = new CorsConfiguration();
+    config.setAllowedOriginPatterns(List.of("*"));  // Acepta cualquier origen
+    config.setAllowCredentials(true);                // Permite credentials
+    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+    config.setAllowedHeaders(List.of("*"));
+    config.setMaxAge(3600L);
+    // ...
+}
+```
+
+#### Características
+
+- ✅ **Orígenes permitidos:** Cualquier origen (`*`) usando `allowedOriginPatterns`
+- ✅ **Credentials:** Habilitado (permite cookies, auth headers, TLS certificates)
+- ✅ **Métodos HTTP:** GET, POST, PUT, DELETE, PATCH, OPTIONS
+- ✅ **Headers:** Todos permitidos
+- ✅ **Preflight cache:** 3600 segundos (1 hora)
+
+#### Integración con Spring Security
+
+El `CorsConfig` se integra automáticamente con `SecurityConfig`:
+
+```java
+@Bean
+public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+        // ...
+}
+```
+
+Esto asegura que CORS funcione correctamente con JWT y autenticación.
+
+#### Configuración para Producción
+
+⚠️ **Importante:** En producción, cambiar `allowedOriginPatterns(List.of("*"))` por dominios específicos:
+
+```java
+// Para producción - solo dominios específicos
+config.setAllowedOriginPatterns(List.of(
+    "https://tuapp.com",
+    "https://www.tuapp.com",
+    "https://admin.tuapp.com"
+));
+```
+
+#### Orígenes Típicos para Desarrollo
+
+| Framework | Puerto | URL |
+|-----------|--------|-----|
+| React | 3000 | `http://localhost:3000` |
+| Angular | 4200 | `http://localhost:4200` |
+| Vue | 8080 | `http://localhost:8080` |
+| Otro | 8081 | `http://localhost:8081` |
+
+#### Solución de Problemas CORS
+
+**Error común:** `"allowedOrigins cannot contain '*' with allowCredentials=true"`
+
+**Solución:** Usar `allowedOriginPatterns` en lugar de `allowedOrigins`:
+```java
+config.setAllowedOriginPatterns(List.of("*"));  // ✅ Correcto
+config.setAllowedOrigins(List.of("*"));         // ❌ Error con credentials
+```
 
 ---
 
@@ -234,12 +434,16 @@ El sistema ya está preparado: solo requiere cambiar la configuración de `permi
 src/main/java/com/cesde/studentinfo/
 ├── Main.java                      # Spring Boot Application
 │
-├── config/                        # Configuraciones
+├── config/                        # Configuraciones (6 archivos)
 │   ├── JpaConfig.java            # Configuración JPA y Repositories
-│   ├── CorsConfig.java           # Configuración CORS
-│   └── SecurityConfig.java       # Configuración de Seguridad
+│   ├── CorsConfig.java           # Configuración CORS (Spring Security)
+│   ├── SecurityConfig.java       # Configuración de Seguridad + JWT
+│   ├── JwtUtil.java              # Utilidad para generar y validar JWT
+│   ├── JwtAuthenticationFilter.java  # Filtro de autenticación JWT
+│   └── (otros archivos de config...)
 │
-├── controller/                    # REST Controllers (13 archivos)
+├── controller/                    # REST Controllers (14 archivos)
+│   ├── AuthController.java       # Autenticación (Login, Register, JWT)
 │   ├── StudentController.java
 │   ├── ProfessorController.java
 │   ├── CourseController.java
@@ -254,7 +458,9 @@ src/main/java/com/cesde/studentinfo/
 │   ├── RoleController.java
 │   └── HealthController.java
 │
-├── service/                       # Business Logic (12 archivos)
+├── service/                       # Business Logic (14 archivos)
+│   ├── AuthService.java          # Lógica de autenticación JWT
+│   ├── CustomUserDetailsService.java  # Carga usuarios desde BD
 │   ├── StudentService.java
 │   ├── ProfessorService.java
 │   ├── CourseService.java
@@ -328,7 +534,7 @@ src/main/java/com/cesde/studentinfo/
 
 ### Base URL: `http://localhost:8080/api`
 
-**Total: 137+ endpoints REST disponibles** ✅
+**Total: 142+ endpoints REST disponibles** ✅ **(incluye 5 endpoints de autenticación JWT)**
 
 ### 📚 Students (10 endpoints)
 
@@ -486,6 +692,18 @@ Similar a Students:
 - POST `/user-roles` - Asignar rol (con auditoría)
 - DELETE `/user-roles/user/{userId}/role/{roleId}` - Remover rol
 
+### 🔐 Authentication (5 endpoints)
+
+| Método | Endpoint | Descripción | Público |
+|--------|----------|-------------|---------|
+| POST | `/auth/login` | Iniciar sesión (obtener JWT) | ✅ Sí |
+| POST | `/auth/register` | Registrar nuevo usuario | ✅ Sí |
+| POST | `/auth/validate-token` | Validar token JWT | ❌ No |
+| POST | `/auth/refresh-token` | Renovar token expirado | ❌ No |
+| GET | `/auth/health` | Estado del servicio de autenticación | ✅ Sí |
+
+**Nota:** Los endpoints marcados con ✅ son públicos y no requieren autenticación. Todos los demás requieren un token JWT válido en el header `Authorization: Bearer <token>`.
+
 ### 🏥 Health (2 endpoints)
 
 | Método | Endpoint | Descripción |
@@ -496,6 +714,62 @@ Similar a Students:
 ---
 
 ## 🧪 Ejemplos de Uso
+
+### 🔐 Autenticación (JWT)
+
+#### 1. Login (obtener token)
+
+```bash
+curl -X POST http://localhost:8080/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "usernameOrEmail": "admin",
+    "password": "Lagp2022"
+  }'
+```
+
+**Respuesta:**
+```json
+{
+  "success": true,
+  "message": "Login exitoso",
+  "data": {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "type": "Bearer",
+    "userId": 1,
+    "username": "admin",
+    "email": "admin@cesde.edu.co",
+    "roles": ["Administrador"],
+    "expiresIn": 86400000
+  }
+}
+```
+
+#### 2. Usar el token en requests subsiguientes
+
+```bash
+# Guardar el token en una variable
+TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+# Usar el token en los requests
+curl http://localhost:8080/api/students \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+#### 3. Registrar nuevo usuario
+
+```bash
+curl -X POST http://localhost:8080/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "nuevo_usuario",
+    "password": "Password123",
+    "email": "usuario@example.com",
+    "roleIds": [2]
+  }'
+```
+
+---
 
 ### Crear Estudiante
 
@@ -652,13 +926,18 @@ mvn clean
 ### Características Implementadas
 - ✅ REST API con Spring Boot
 - ✅ Spring Data JPA
+- ✅ **Autenticación JWT (JSON Web Tokens)**
+- ✅ **Spring Security** con filtros personalizados
+- ✅ **CORS configurado** (CorsConfigurationSource)
+- ✅ **BCrypt** para encriptación de passwords
 - ✅ Transaction Management con @Transactional
 - ✅ Bean Validation en DTOs
 - ✅ Global Exception Handler
-- ✅ CORS configurado
 - ✅ Logging con SLF4J
-- ✅ Response format consistente
+- ✅ Response format consistente (ApiResponse)
 - ✅ HTTP Status codes apropiados
+- ✅ **Stateless session management**
+- ✅ **Token refresh** automático
 
 ### Manejo de Errores
 - **404 (Not Found)**: `ResourceNotFoundException`
@@ -791,7 +1070,9 @@ Proyecto académico - Enero 2026
 
 ---
 
-**Última actualización:** Enero 14, 2026  
-**Versión:** 2.0.0  
+**Última actualización:** Enero 15, 2026  
+**Versión:** 2.0.0 - JWT + CORS  
 **Estado:** ✅ PRODUCTION READY - 100% Funcional
+
+
 

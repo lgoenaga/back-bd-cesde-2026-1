@@ -10,7 +10,10 @@ echo ""
 # Cargar variables de entorno desde archivo .env si existe
 if [ -f .env ]; then
     echo "📋 Cargando variables de entorno desde .env..."
-    export $(cat .env | grep -v '^#' | grep -v '^$' | xargs)
+    # Exportar variables correctamente, incluyendo las que tienen espacios o caracteres especiales
+    set -a  # Marca todas las variables para export
+    source .env
+    set +a  # Desactiva el export automático
     echo "✅ Variables de entorno cargadas"
     echo ""
 else

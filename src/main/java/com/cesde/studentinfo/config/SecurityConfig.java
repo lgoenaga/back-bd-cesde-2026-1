@@ -1,31 +1,45 @@
 package com.cesde.studentinfo.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 /**
- * Configuración de Spring Security
+ * Configuración de Spring Security con JWT
  *
- * ESTADO ACTUAL (Desarrollo):
- * - Acceso permitido sin autenticación (permitAll)
- * - CustomUserDetailsService implementado para eliminar warnings
- * - BCrypt configurado para passwords
- *
- * FUTURO (Producción):
- * - Se activará autenticación por endpoint según roles
- * - CustomUserDetailsService ya está listo para ser usado
+ * Sistema de autenticación completo:
+ * - Autenticación JWT con token Bearer en header Authorization
+ * - Roles incluidos en el payload del JWT para validación rápida
+ * - Endpoints públicos: /auth/** (login, register), /health
+ * - Resto de endpoints protegidos requieren autenticación
+ * - Stateless session management (sin sesiones en servidor)
  */
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final UserDetailsService userDetailsService;
+    private final CorsConfigurationSource corsConfigurationSource;
 
     /**
      * Bean para encriptación de passwords con BCrypt
-     * Usado para crear y validar passwords de usuarios en la BD
      */
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -33,24 +47,52 @@ public class SecurityConfig {
     }
 
     /**
+     * Proveedor de autenticación DAO
+     */
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
+    }
+
+    /**
+     * Authentication Manager Bean
+     */
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
+    }
+
+
+    /**
      * Configuración de la cadena de filtros de seguridad
      *
-     * IMPORTANTE: Actualmente permite todo el acceso sin autenticación (permitAll)
-     * para facilitar el desarrollo y pruebas desde el frontend.
-     *
-     * El CustomUserDetailsService está implementado para:
-     * 1. Eliminar el warning de "generated security password"
-     * 2. Estar listo cuando se active la autenticación
-     *
-     * Para activar autenticación, cambiar permitAll() por configuración de roles.
+     * JWT + Stateless Session Management
+     * - Endpoints públicos: /auth/** (login, register), /health
+     * - OPTIONS requests permitidas (CORS preflight)
+     * - Resto requiere autenticación con token JWT válido
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()) // Deshabilitado para API REST
+            .cors(cors -> cors.configurationSource(corsConfigurationSource))
+            .csrf(AbstractHttpConfigurer::disable)
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .anyRequest().permitAll() // TODO: Implementar autenticación por roles
-            );
+                // Endpoints públicos
+                .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/health").permitAll()
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                // Todos los demás endpoints requieren autenticación
+                .anyRequest().authenticated()
+            )
+            .authenticationProvider(authenticationProvider())
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 }

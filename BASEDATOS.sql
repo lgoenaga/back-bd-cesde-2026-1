@@ -1158,7 +1158,7 @@ INSERT INTO `users` (`username`, `password`, `email`, `is_active`)
 SELECT * FROM (
   SELECT
     'admin' AS username,
-    '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVKIUi' AS password,
+    '$2a$10$inrseundfnAX.P4Ra/jwm.uyoxuDhXEBcHQLjXhI8O6LYDST9KP8m' AS password,
     'admin@cesde.edu.co' AS email,
     TRUE AS is_active
 ) AS t
@@ -1169,7 +1169,7 @@ INSERT INTO `users` (`username`, `password`, `email`, `is_active`)
 SELECT * FROM (
   SELECT
     'usuario' AS username,
-    '$2a$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW' AS password,
+    '$2a$10$j/1/6Byzh.7q6rM53RrKD.JDoGO1tFKoUSK8DjDUsmzJqjrMGjIfy' AS password,
     'usuario@cesde.edu.co' AS email,
     TRUE AS is_active
 ) AS t

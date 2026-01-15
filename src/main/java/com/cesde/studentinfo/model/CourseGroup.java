@@ -21,15 +21,15 @@ public class CourseGroup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "level_id", nullable = false)
     private Level level;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "academic_period_id", nullable = false)
     private AcademicPeriod academicPeriod;
 
@@ -81,4 +81,3 @@ public class CourseGroup {
         return "CourseGroup{id=" + id + ", groupCode='" + groupCode + "', groupName='" + groupName + "'}";
     }
 }
-

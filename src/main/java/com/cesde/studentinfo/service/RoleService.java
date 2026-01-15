@@ -4,6 +4,8 @@ import com.cesde.studentinfo.model.Role;
 import com.cesde.studentinfo.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -98,5 +100,26 @@ public class RoleService {
     public Long countUsersByRole(Long roleId) {
         return roleRepository.countUsersByRoleId(roleId);
     }
-}
 
+    @Transactional(readOnly = true)
+    public Page<Role> getRolesPage(Pageable pageable) {
+        return roleRepository.findAll(pageable);
+    }
+
+    // ==================== PAGINATION METHODS ====================
+
+    @Transactional(readOnly = true)
+    public Page<Role> getAllRolesPaginated(Pageable pageable) {
+        return roleRepository.findAll(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Role> getEnabledRolesPaginated(Pageable pageable) {
+        return roleRepository.findByEnabledTrue(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Role> searchRolesByNamePaginated(String name, Pageable pageable) {
+        return roleRepository.findByNameContainingIgnoreCase(name, pageable);
+    }
+}

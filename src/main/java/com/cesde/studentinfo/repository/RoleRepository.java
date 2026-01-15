@@ -1,6 +1,8 @@
 package com.cesde.studentinfo.repository;
 
 import com.cesde.studentinfo.model.Role;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -28,5 +30,10 @@ public interface RoleRepository extends JpaRepository<Role, Long> {
      */
     @Query("SELECT COUNT(u) FROM User u JOIN u.roles r WHERE r.id = :roleId")
     Long countUsersByRoleId(@Param("roleId") Long roleId);
-}
 
+    // ==================== PAGINATION METHODS ====================
+
+    Page<Role> findByEnabledTrue(Pageable pageable);
+
+    Page<Role> findByNameContainingIgnoreCase(String name, Pageable pageable);
+}

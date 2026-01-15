@@ -4,6 +4,8 @@ import com.cesde.studentinfo.model.Professor;
 import com.cesde.studentinfo.repository.ProfessorRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -85,5 +87,22 @@ public class ProfessorService {
     public long countProfessors() {
         return professorRepository.count();
     }
-}
 
+    // ==================== PAGINATION METHODS ====================
+
+    @Transactional(readOnly = true)
+    public Page<Professor> getAllProfessorsPaginated(Pageable pageable) {
+        return professorRepository.findAll(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Professor> getActiveProfessorsPaginated(Pageable pageable) {
+        return professorRepository.findByIsActiveTrue(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Professor> searchProfessorsByNamePaginated(String name, Pageable pageable) {
+        return professorRepository.findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(
+                name, name, pageable);
+    }
+}

@@ -1,6 +1,7 @@
 package com.cesde.studentinfo.controller;
 
 import com.cesde.studentinfo.dto.ApiResponse;
+import com.cesde.studentinfo.dto.PagedResponse;
 import com.cesde.studentinfo.dto.RoleDTO;
 import com.cesde.studentinfo.dto.RoleResponseDTO;
 import com.cesde.studentinfo.dto.RoleWithUsersDTO;
@@ -10,6 +11,10 @@ import com.cesde.studentinfo.service.RoleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -150,5 +155,57 @@ public class RoleController {
         roleService.deleteRole(id);
         return ResponseEntity.ok(ApiResponse.success(null, "Role deleted successfully"));
     }
-}
 
+    // ==================== PAGINATED ENDPOINTS ====================
+
+    @GetMapping("/paged")
+    public ResponseEntity<ApiResponse<PagedResponse<RoleResponseDTO>>> getAllRolesPaginated(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "name,asc") String[] sort) {
+
+        log.info("GET /roles/paged - Fetching roles page={}, size={}", page, size);
+        Pageable pageable = createPageable(page, size, sort);
+        Page<Role> rolePage = roleService.getAllRolesPaginated(pageable);
+        PagedResponse<RoleResponseDTO> response = PagedResponse.from(
+                rolePage.map(RoleResponseDTO::fromEntity));
+        return ResponseEntity.ok(ApiResponse.success(response, "Roles retrieved successfully"));
+    }
+
+    @GetMapping("/enabled/paged")
+    public ResponseEntity<ApiResponse<PagedResponse<RoleResponseDTO>>> getEnabledRolesPaginated(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "name,asc") String[] sort) {
+
+        log.info("GET /roles/enabled/paged - Fetching enabled roles page={}, size={}", page, size);
+        Pageable pageable = createPageable(page, size, sort);
+        Page<Role> rolePage = roleService.getEnabledRolesPaginated(pageable);
+        PagedResponse<RoleResponseDTO> response = PagedResponse.from(
+                rolePage.map(RoleResponseDTO::fromEntity));
+        return ResponseEntity.ok(ApiResponse.success(response, "Enabled roles retrieved successfully"));
+    }
+
+    @GetMapping("/search/paged")
+    public ResponseEntity<ApiResponse<PagedResponse<RoleResponseDTO>>> searchRolesPaginated(
+            @RequestParam String name,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "name,asc") String[] sort) {
+
+        log.info("GET /roles/search/paged - Searching roles name={}, page={}, size={}", name, page, size);
+        Pageable pageable = createPageable(page, size, sort);
+        Page<Role> rolePage = roleService.searchRolesByNamePaginated(name, pageable);
+        PagedResponse<RoleResponseDTO> response = PagedResponse.from(
+                rolePage.map(RoleResponseDTO::fromEntity));
+        return ResponseEntity.ok(ApiResponse.success(response, "Search completed successfully"));
+    }
+
+    private Pageable createPageable(int page, int size, String[] sort) {
+        String sortBy = sort.length > 0 ? sort[0] : "id";
+        String direction = sort.length > 1 ? sort[1] : "asc";
+        Sort.Direction sortDirection = direction.equalsIgnoreCase("asc")
+                ? Sort.Direction.ASC : Sort.Direction.DESC;
+        return PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
+    }
+}

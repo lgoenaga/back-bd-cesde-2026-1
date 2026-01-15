@@ -1,6 +1,8 @@
 package com.cesde.studentinfo.repository;
 
 import com.cesde.studentinfo.model.AcademicPeriod;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -42,5 +44,11 @@ public interface AcademicPeriodRepository extends JpaRepository<AcademicPeriod, 
      * Verifica si existe un período con el nombre dado
      */
     boolean existsByName(String name);
-}
 
+    // ==================== PAGINATION METHODS ====================
+
+    Page<AcademicPeriod> findByIsActiveTrue(Pageable pageable);
+
+    @Query("FROM AcademicPeriod a WHERE YEAR(a.startDate) = :year ORDER BY a.startDate")
+    Page<AcademicPeriod> findByYear(int year, Pageable pageable);
+}

@@ -1,13 +1,14 @@
 # Student Information System - REST API
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)]()
-[![Version](https://img.shields.io/badge/version-2.0.0-blue)]()
+[![Version](https://img.shields.io/badge/version-2.1.0-blue)]()
 [![Java](https://img.shields.io/badge/Java-17-orange)]()
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.1-green)]()
-[![Endpoints](https://img.shields.io/badge/endpoints-137+-success)]()
+[![Endpoints](https://img.shields.io/badge/endpoints-170+-success)]()
 [![API](https://img.shields.io/badge/API-100%25%20Funcional-brightgreen)]()
+[![Pagination](https://img.shields.io/badge/Pagination-Implemented-blue)]()
 
-Sistema de Información Estudiantil completo desarrollado como REST API con Spring Boot, JPA y MySQL.
+Sistema de Información Estudiantil completo desarrollado como REST API con Spring Boot, JPA y MySQL con **soporte completo de paginación**.
 
 **✅ 100% Funcional desde Frontend - No requiere acceso directo a la base de datos**
 
@@ -40,7 +41,7 @@ Respuesta esperada:
   "data": {
     "status": "UP",
     "service": "Student Information System API",
-    "version": "2.0.0"
+    "version": "2.1.0"
   }
 }
 ```
@@ -843,6 +844,224 @@ curl -X POST http://localhost:8080/api/attendance \
 
 ---
 
+## 📄 Paginación
+
+### Características de Paginación
+
+La API implementa **paginación completa** en todos los endpoints de listado para mejorar el rendimiento y la experiencia del usuario.
+
+#### Endpoints con Soporte de Paginación
+
+Todos los endpoints principales tienen versiones paginadas accesibles agregando `/paged` al path:
+
+| Entidad | Endpoint Base | Endpoint Paginado |
+|---------|---------------|-------------------|
+| **Students** | `/students` | `/students/paged` |
+| **Professors** | `/professors` | `/professors/paged` |
+| **Courses** | `/courses` | `/courses/paged` |
+| **Levels** | `/levels` | `/levels/paged` |
+| **Subjects** | `/subjects` | `/subjects/paged` |
+| **Academic Periods** | `/academic-periods` | `/academic-periods/paged` |
+| **Users** | `/users` | `/users/paged` |
+| **Roles** | `/roles` | `/roles/paged` |
+
+#### Parámetros de Paginación
+
+| Parámetro | Tipo | Default | Descripción |
+|-----------|------|---------|-------------|
+| `page` | Integer | `0` | Número de página (0-indexed) |
+| `size` | Integer | `20` | Tamaño de página (registros por página) |
+| `sort` | String[] | `id,desc` | Ordenamiento: `campo,dirección` |
+
+**Direcciones de ordenamiento:** `asc` (ascendente) o `desc` (descendente)
+
+#### Estructura de Respuesta Paginada
+
+```json
+{
+  "success": true,
+  "message": "Students retrieved successfully",
+  "data": {
+    "content": [
+      {
+        "id": 1,
+        "firstName": "Juan",
+        "lastName": "Pérez",
+        ...
+      }
+    ],
+    "page": 0,
+    "size": 20,
+    "totalElements": 150,
+    "totalPages": 8,
+    "first": true,
+    "last": false,
+    "empty": false,
+    "sort": {
+      "sorted": true,
+      "sortBy": "lastName",
+      "direction": "ASC"
+    }
+  }
+}
+```
+
+#### Metadatos de Paginación
+
+| Campo | Descripción |
+|-------|-------------|
+| `content` | Array con los registros de la página actual |
+| `page` | Número de página actual (0-indexed) |
+| `size` | Tamaño de página solicitado |
+| `totalElements` | Total de registros disponibles |
+| `totalPages` | Total de páginas disponibles |
+| `first` | `true` si es la primera página |
+| `last` | `true` si es la última página |
+| `empty` | `true` si no hay registros |
+| `sort.sorted` | `true` si está ordenado |
+| `sort.sortBy` | Campo usado para ordenar |
+| `sort.direction` | Dirección del ordenamiento (ASC/DESC) |
+
+### Ejemplos de Uso
+
+#### 1. Listar Estudiantes - Primera Página (20 registros)
+
+```bash
+curl "http://localhost:8080/api/students/paged"
+```
+
+Equivalente a:
+```bash
+curl "http://localhost:8080/api/students/paged?page=0&size=20&sort=id,desc"
+```
+
+#### 2. Segunda Página con 50 Registros
+
+```bash
+curl "http://localhost:8080/api/students/paged?page=1&size=50"
+```
+
+#### 3. Ordenar por Apellido Ascendente
+
+```bash
+curl "http://localhost:8080/api/students/paged?sort=lastName,asc"
+```
+
+#### 4. Página 3, 10 registros, ordenado por fecha de inscripción
+
+```bash
+curl "http://localhost:8080/api/students/paged?page=2&size=10&sort=enrollmentDate,desc"
+```
+
+#### 5. Buscar con Paginación
+
+```bash
+# Buscar estudiantes llamados "Juan" - página 1, 15 registros
+curl "http://localhost:8080/api/students/search/paged?name=Juan&page=0&size=15&sort=lastName,asc"
+```
+
+#### 6. Filtrar Activos con Paginación
+
+```bash
+# Estudiantes activos - página 2, 25 registros
+curl "http://localhost:8080/api/students/active/paged?page=1&size=25"
+```
+
+### Endpoints Paginados Disponibles
+
+#### Students
+- `GET /students/paged` - Todos los estudiantes
+- `GET /students/active/paged` - Solo activos
+- `GET /students/search/paged?name={name}` - Búsqueda por nombre
+
+#### Professors
+- `GET /professors/paged` - Todos los profesores
+- `GET /professors/active/paged` - Solo activos
+- `GET /professors/search/paged?name={name}` - Búsqueda por nombre
+
+#### Courses
+- `GET /courses/paged` - Todos los cursos
+- `GET /courses/active/paged` - Solo activos
+- `GET /courses/search/paged?name={name}` - Búsqueda por nombre
+
+#### Levels
+- `GET /levels/paged` - Todos los niveles
+- `GET /levels/course/{courseId}/paged` - Niveles de un curso específico
+
+#### Subjects
+- `GET /subjects/paged` - Todas las materias
+- `GET /subjects/active/paged` - Solo activas
+- `GET /subjects/level/{levelId}/paged` - Materias de un nivel
+- `GET /subjects/search/paged?name={name}` - Búsqueda por nombre
+
+#### Academic Periods
+- `GET /academic-periods/paged` - Todos los períodos
+- `GET /academic-periods/active/paged` - Solo activos
+- `GET /academic-periods/year/{year}/paged` - Por año
+
+#### Users
+- `GET /users/paged` - Todos los usuarios
+- `GET /users/active/paged` - Solo activos
+- `GET /users/search/paged?username={username}` - Búsqueda por username
+- `GET /users/role/{roleName}/paged` - Usuarios con un rol específico
+
+#### Roles
+- `GET /roles/paged` - Todos los roles
+- `GET /roles/enabled/paged` - Solo habilitados
+- `GET /roles/search/paged?name={name}` - Búsqueda por nombre
+
+### Recomendaciones de Uso
+
+✅ **Buenas Prácticas:**
+- Usar paginación para listados de más de 50 registros
+- Tamaño de página recomendado: 20-50 para web, 10-20 para móvil
+- Ordenar por campos indexados para mejor performance
+- Cachear página actual en frontend para navegación fluida
+
+❌ **Evitar:**
+- Páginas muy grandes (>100 registros)
+- Solicitar todas las páginas a la vez
+- No usar paginación en listados grandes
+
+### Integración con Frontend
+
+#### React Example
+```javascript
+const [page, setPage] = useState(0);
+const [size] = useState(20);
+
+const fetchStudents = async () => {
+  const response = await fetch(
+    `http://localhost:8080/api/students/paged?page=${page}&size=${size}&sort=lastName,asc`
+  );
+  const data = await response.json();
+  
+  return {
+    students: data.data.content,
+    totalPages: data.data.totalPages,
+    currentPage: data.data.page,
+    total: data.data.totalElements
+  };
+};
+```
+
+#### Angular Example
+```typescript
+getStudentsPaginated(page: number = 0, size: number = 20, sort: string = 'id,desc') {
+  const params = new HttpParams()
+    .set('page', page.toString())
+    .set('size', size.toString())
+    .set('sort', sort);
+    
+  return this.http.get<ApiResponse<PagedResponse<Student>>>(
+    `${this.apiUrl}/students/paged`,
+    { params }
+  );
+}
+```
+
+---
+
 ## 📝 Formato de Respuesta
 
 Todas las respuestas siguen un formato consistente:
@@ -997,15 +1216,24 @@ Ver `BASEDATOS.sql` para el esquema completo.
 
 ## 🔮 Próximas Mejoras
 
+### ✅ Completado
+- [x] **Paginación en listados largos** ✨ (v2.1.0 - Enero 2026)
+  - 33 endpoints paginados implementados
+  - Soporte completo para todas las entidades principales
+  - Ordenamiento configurable y metadatos de paginación
+- [x] **Spring Security con JWT** (v2.0.0 - Enero 2026)
+- [x] **CORS configurado** (v2.0.0)
+- [x] **Gestión de Usuarios y Roles** (v2.0.0)
+
 ### Corto Plazo
 - [ ] Swagger/OpenAPI para documentación interactiva
-- [ ] Spring Security (JWT)
 - [ ] Unit tests e Integration tests
+- [ ] Validaciones avanzadas en DTOs
 
 ### Mediano Plazo
-- [ ] Paginación en listados largos
-- [ ] Búsquedas avanzadas con filtros
+- [ ] Búsquedas avanzadas con múltiples filtros combinados
 - [ ] Reportes y estadísticas
+- [ ] Exportación de datos (PDF, Excel)
 
 ### Largo Plazo
 - [ ] Cache con Redis
@@ -1071,8 +1299,8 @@ Proyecto académico - Enero 2026
 ---
 
 **Última actualización:** Enero 15, 2026  
-**Versión:** 2.0.0 - JWT + CORS  
-**Estado:** ✅ PRODUCTION READY - 100% Funcional
+**Versión:** 2.1.0 - Paginación Completa + JWT + CORS  
+**Estado:** ✅ PRODUCTION READY - 100% Funcional con Paginación
 
 
 

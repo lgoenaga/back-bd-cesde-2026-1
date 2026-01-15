@@ -6,6 +6,8 @@ import com.cesde.studentinfo.model.AcademicPeriod;
 import com.cesde.studentinfo.repository.AcademicPeriodRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -116,5 +118,22 @@ public class AcademicPeriodService {
     @Transactional(readOnly = true)
     public long countPeriods() {
         return academicPeriodRepository.count();
+    }
+
+    // ==================== PAGINATION METHODS ====================
+
+    @Transactional(readOnly = true)
+    public Page<AcademicPeriod> getAllPeriodsPaginated(Pageable pageable) {
+        return academicPeriodRepository.findAll(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<AcademicPeriod> getActivePeriodsPaginated(Pageable pageable) {
+        return academicPeriodRepository.findByIsActiveTrue(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<AcademicPeriod> getPeriodsByYearPaginated(int year, Pageable pageable) {
+        return academicPeriodRepository.findByYear(year, pageable);
     }
 }

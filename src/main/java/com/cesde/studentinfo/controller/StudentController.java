@@ -1,6 +1,7 @@
 package com.cesde.studentinfo.controller;
 
 import com.cesde.studentinfo.dto.ApiResponse;
+import com.cesde.studentinfo.dto.PagedResponse;
 import com.cesde.studentinfo.dto.StudentDTO;
 import com.cesde.studentinfo.dto.StudentResponseDTO;
 import com.cesde.studentinfo.exception.ResourceNotFoundException;
@@ -9,6 +10,10 @@ import com.cesde.studentinfo.service.StudentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -175,6 +180,86 @@ public class StudentController {
         log.info("GET /students/count - Counting students");
         long count = studentService.countStudents();
         return ResponseEntity.ok(ApiResponse.success(count, "Count retrieved successfully"));
+    }
+
+    // ==================== PAGINATED ENDPOINTS ====================
+
+    /**
+     * GET /api/students/paged - Obtiene todos los estudiantes con paginación
+     * @param page número de página (default: 0)
+     * @param size tamaño de página (default: 20)
+     * @param sort criterio de ordenamiento (default: id,desc)
+     */
+    @GetMapping("/paged")
+    public ResponseEntity<ApiResponse<PagedResponse<StudentResponseDTO>>> getAllStudentsPaginated(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "id,desc") String[] sort) {
+
+        log.info("GET /students/paged - Fetching students page={}, size={}, sort={}", page, size, sort);
+
+        Pageable pageable = createPageable(page, size, sort);
+        Page<Student> studentPage = studentService.getAllStudentsPaginated(pageable);
+
+        PagedResponse<StudentResponseDTO> response = PagedResponse.from(
+                studentPage.map(StudentResponseDTO::fromEntity));
+
+        return ResponseEntity.ok(ApiResponse.success(response, "Students retrieved successfully"));
+    }
+
+    /**
+     * GET /api/students/active/paged - Obtiene estudiantes activos con paginación
+     */
+    @GetMapping("/active/paged")
+    public ResponseEntity<ApiResponse<PagedResponse<StudentResponseDTO>>> getActiveStudentsPaginated(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "id,desc") String[] sort) {
+
+        log.info("GET /students/active/paged - Fetching active students page={}, size={}", page, size);
+
+        Pageable pageable = createPageable(page, size, sort);
+        Page<Student> studentPage = studentService.getActiveStudentsPaginated(pageable);
+
+        PagedResponse<StudentResponseDTO> response = PagedResponse.from(
+                studentPage.map(StudentResponseDTO::fromEntity));
+
+        return ResponseEntity.ok(ApiResponse.success(response, "Active students retrieved successfully"));
+    }
+
+    /**
+     * GET /api/students/search/paged - Busca estudiantes por nombre con paginación
+     */
+    @GetMapping("/search/paged")
+    public ResponseEntity<ApiResponse<PagedResponse<StudentResponseDTO>>> searchStudentsPaginated(
+            @RequestParam String name,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "lastName,asc") String[] sort) {
+
+        log.info("GET /students/search/paged - Searching students name={}, page={}, size={}", name, page, size);
+
+        Pageable pageable = createPageable(page, size, sort);
+        Page<Student> studentPage = studentService.searchStudentsByNamePaginated(name, pageable);
+
+        PagedResponse<StudentResponseDTO> response = PagedResponse.from(
+                studentPage.map(StudentResponseDTO::fromEntity));
+
+        return ResponseEntity.ok(ApiResponse.success(response, "Search completed successfully"));
+    }
+
+    /**
+     * Helper method para crear Pageable desde parámetros
+     */
+    private Pageable createPageable(int page, int size, String[] sort) {
+        String sortBy = sort.length > 0 ? sort[0] : "id";
+        String direction = sort.length > 1 ? sort[1] : "desc";
+
+        Sort.Direction sortDirection = direction.equalsIgnoreCase("asc")
+                ? Sort.Direction.ASC
+                : Sort.Direction.DESC;
+
+        return PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
     }
 }
 

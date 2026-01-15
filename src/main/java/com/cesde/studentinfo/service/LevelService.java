@@ -8,6 +8,8 @@ import com.cesde.studentinfo.repository.CourseRepository;
 import com.cesde.studentinfo.repository.LevelRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -90,5 +92,17 @@ public class LevelService {
     @Transactional(readOnly = true)
     public long countLevels() {
         return levelRepository.count();
+    }
+
+    // ==================== PAGINATION METHODS ====================
+
+    @Transactional(readOnly = true)
+    public Page<Level> getAllLevelsPaginated(Pageable pageable) {
+        return levelRepository.findAll(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Level> getLevelsByCoursePaginated(Long courseId, Pageable pageable) {
+        return levelRepository.findByCourseId(courseId, pageable);
     }
 }

@@ -1,6 +1,7 @@
 package com.cesde.studentinfo.controller;
 
 import com.cesde.studentinfo.dto.ApiResponse;
+import com.cesde.studentinfo.dto.PagedResponse;
 import com.cesde.studentinfo.dto.SubjectDTO;
 import com.cesde.studentinfo.dto.SubjectResponseDTO;
 import com.cesde.studentinfo.exception.ResourceNotFoundException;
@@ -11,6 +12,10 @@ import com.cesde.studentinfo.service.SubjectService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -139,5 +144,73 @@ public class SubjectController {
         log.info("GET /subjects/count - Counting subjects");
         long count = subjectService.countSubjects();
         return ResponseEntity.ok(ApiResponse.success(count, "Count retrieved successfully"));
+    }
+
+    // ==================== PAGINATED ENDPOINTS ====================
+
+    @GetMapping("/paged")
+    public ResponseEntity<ApiResponse<PagedResponse<SubjectResponseDTO>>> getAllSubjectsPaginated(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "name,asc") String[] sort) {
+
+        log.info("GET /subjects/paged - Fetching subjects page={}, size={}", page, size);
+        Pageable pageable = createPageable(page, size, sort);
+        Page<Subject> subjectPage = subjectService.getAllSubjectsPaginated(pageable);
+        PagedResponse<SubjectResponseDTO> response = PagedResponse.from(
+                subjectPage.map(SubjectResponseDTO::fromEntity));
+        return ResponseEntity.ok(ApiResponse.success(response, "Subjects retrieved successfully"));
+    }
+
+    @GetMapping("/active/paged")
+    public ResponseEntity<ApiResponse<PagedResponse<SubjectResponseDTO>>> getActiveSubjectsPaginated(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "name,asc") String[] sort) {
+
+        log.info("GET /subjects/active/paged - Fetching active subjects page={}, size={}", page, size);
+        Pageable pageable = createPageable(page, size, sort);
+        Page<Subject> subjectPage = subjectService.getAllActiveSubjectsPaginated(pageable);
+        PagedResponse<SubjectResponseDTO> response = PagedResponse.from(
+                subjectPage.map(SubjectResponseDTO::fromEntity));
+        return ResponseEntity.ok(ApiResponse.success(response, "Active subjects retrieved successfully"));
+    }
+
+    @GetMapping("/level/{levelId}/paged")
+    public ResponseEntity<ApiResponse<PagedResponse<SubjectResponseDTO>>> getSubjectsByLevelPaginated(
+            @PathVariable Long levelId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "name,asc") String[] sort) {
+
+        log.info("GET /subjects/level/{}/paged - Fetching subjects by level page={}, size={}", levelId, page, size);
+        Pageable pageable = createPageable(page, size, sort);
+        Page<Subject> subjectPage = subjectService.getSubjectsByLevelPaginated(levelId, pageable);
+        PagedResponse<SubjectResponseDTO> response = PagedResponse.from(
+                subjectPage.map(SubjectResponseDTO::fromEntity));
+        return ResponseEntity.ok(ApiResponse.success(response, "Subjects retrieved successfully"));
+    }
+
+    @GetMapping("/search/paged")
+    public ResponseEntity<ApiResponse<PagedResponse<SubjectResponseDTO>>> searchSubjectsPaginated(
+            @RequestParam String name,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "name,asc") String[] sort) {
+
+        log.info("GET /subjects/search/paged - Searching subjects name={}, page={}, size={}", name, page, size);
+        Pageable pageable = createPageable(page, size, sort);
+        Page<Subject> subjectPage = subjectService.searchSubjectsByNamePaginated(name, pageable);
+        PagedResponse<SubjectResponseDTO> response = PagedResponse.from(
+                subjectPage.map(SubjectResponseDTO::fromEntity));
+        return ResponseEntity.ok(ApiResponse.success(response, "Search completed successfully"));
+    }
+
+    private Pageable createPageable(int page, int size, String[] sort) {
+        String sortBy = sort.length > 0 ? sort[0] : "id";
+        String direction = sort.length > 1 ? sort[1] : "asc";
+        Sort.Direction sortDirection = direction.equalsIgnoreCase("asc")
+                ? Sort.Direction.ASC : Sort.Direction.DESC;
+        return PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
     }
 }

@@ -9,6 +9,8 @@ import com.cesde.studentinfo.repository.StudentRepository;
 import com.cesde.studentinfo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -177,5 +179,31 @@ public class UserService {
     public boolean validatePassword(String rawPassword, String encodedPassword) {
         return passwordEncoder.matches(rawPassword, encodedPassword);
     }
-}
 
+    @Transactional(readOnly = true)
+    public Page<User> getUsers(Pageable pageable) {
+        return userRepository.findAll(pageable);
+    }
+
+    // ==================== PAGINATION METHODS ====================
+
+    @Transactional(readOnly = true)
+    public Page<User> getAllUsersPaginated(Pageable pageable) {
+        return userRepository.findAll(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<User> getActiveUsersPaginated(Pageable pageable) {
+        return userRepository.findByIsActiveTrue(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<User> searchUsersByUsernamePaginated(String username, Pageable pageable) {
+        return userRepository.findByUsernameContainingIgnoreCase(username, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<User> getUsersByRolePaginated(String roleName, Pageable pageable) {
+        return userRepository.findByRoleName(roleName, pageable);
+    }
+}

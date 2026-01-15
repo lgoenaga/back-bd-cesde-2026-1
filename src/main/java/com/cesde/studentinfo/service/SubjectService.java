@@ -8,6 +8,8 @@ import com.cesde.studentinfo.repository.LevelRepository;
 import com.cesde.studentinfo.repository.SubjectRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -122,5 +124,27 @@ public class SubjectService {
     @Transactional(readOnly = true)
     public long countSubjects() {
         return subjectRepository.count();
+    }
+
+    // ==================== PAGINATION METHODS ====================
+
+    @Transactional(readOnly = true)
+    public Page<Subject> getAllSubjectsPaginated(Pageable pageable) {
+        return subjectRepository.findAll(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Subject> getAllActiveSubjectsPaginated(Pageable pageable) {
+        return subjectRepository.findByIsActiveTrue(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Subject> getSubjectsByLevelPaginated(Long levelId, Pageable pageable) {
+        return subjectRepository.findByLevelId(levelId, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Subject> searchSubjectsByNamePaginated(String name, Pageable pageable) {
+        return subjectRepository.findByNameContainingIgnoreCase(name, pageable);
     }
 }

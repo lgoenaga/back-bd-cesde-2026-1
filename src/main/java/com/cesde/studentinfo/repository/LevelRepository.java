@@ -2,6 +2,8 @@ package com.cesde.studentinfo.repository;
 
 import com.cesde.studentinfo.model.Level;
 import com.cesde.studentinfo.model.Course;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -38,5 +40,9 @@ public interface LevelRepository extends JpaRepository<Level, Long> {
      * Verifica si existe un nivel para un curso
      */
     boolean existsByCourseIdAndLevelNumber(Long courseId, Integer levelNumber);
-}
 
+    // ==================== PAGINATION METHODS ====================
+
+    @Query("FROM Level l WHERE l.course.id = :courseId ORDER BY l.levelNumber")
+    Page<Level> findByCourseId(@Param("courseId") Long courseId, Pageable pageable);
+}

@@ -4,6 +4,8 @@ import com.cesde.studentinfo.model.Course;
 import com.cesde.studentinfo.repository.CourseRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -114,6 +116,21 @@ public class CourseService {
     public long countCourses() {
         return courseRepository.count();
     }
+
+    // ==================== PAGINATION METHODS ====================
+
+    @Transactional(readOnly = true)
+    public Page<Course> getAllCoursesPaginated(Pageable pageable) {
+        return courseRepository.findAll(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Course> getActiveCoursesPaginated(Pageable pageable) {
+        return courseRepository.findByIsActiveTrue(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Course> searchCoursesByNamePaginated(String name, Pageable pageable) {
+        return courseRepository.findByNameContainingIgnoreCase(name, pageable);
+    }
 }
-
-

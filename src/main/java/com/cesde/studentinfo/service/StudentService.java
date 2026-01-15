@@ -4,6 +4,8 @@ import com.cesde.studentinfo.model.Student;
 import com.cesde.studentinfo.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -85,5 +87,22 @@ public class StudentService {
     public long countStudents() {
         return studentRepository.count();
     }
-}
 
+    // ==================== PAGINATION METHODS ====================
+
+    @Transactional(readOnly = true)
+    public Page<Student> getAllStudentsPaginated(Pageable pageable) {
+        return studentRepository.findAll(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Student> getActiveStudentsPaginated(Pageable pageable) {
+        return studentRepository.findByIsActiveTrue(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Student> searchStudentsByNamePaginated(String name, Pageable pageable) {
+        return studentRepository.findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(
+                name, name, pageable);
+    }
+}

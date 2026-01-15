@@ -1,6 +1,8 @@
 package com.cesde.studentinfo.repository;
 
 import com.cesde.studentinfo.model.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -36,5 +38,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM User u JOIN u.roles r WHERE r.name = :roleName")
     List<User> findByRoleName(String roleName);
-}
 
+    // ==================== PAGINATION METHODS ====================
+
+    Page<User> findByIsActiveTrue(Pageable pageable);
+
+    Page<User> findByUsernameContainingIgnoreCase(String username, Pageable pageable);
+
+    @Query("SELECT u FROM User u JOIN u.roles r WHERE r.name = :roleName")
+    Page<User> findByRoleName(String roleName, Pageable pageable);
+}

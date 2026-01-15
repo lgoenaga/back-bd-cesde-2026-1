@@ -1,6 +1,8 @@
 package com.cesde.studentinfo.repository;
 
 import com.cesde.studentinfo.model.Course;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -36,5 +38,10 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
      * Verifica si existe un curso con el código dado
      */
     boolean existsByCode(String code);
-}
 
+    // ==================== PAGINATION METHODS ====================
+
+    Page<Course> findByIsActiveTrue(Pageable pageable);
+
+    Page<Course> findByNameContainingIgnoreCase(String name, Pageable pageable);
+}

@@ -1,6 +1,8 @@
 package com.cesde.studentinfo.repository;
 
 import com.cesde.studentinfo.model.Student;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -49,5 +51,17 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
      * Verifica si existe un estudiante con el email dado
      */
     boolean existsByEmail(String email);
-}
 
+    // ==================== PAGINATION METHODS ====================
+
+    /**
+     * Obtiene todos los estudiantes activos con paginación
+     */
+    Page<Student> findByIsActiveTrue(Pageable pageable);
+
+    /**
+     * Busca estudiantes por nombre o apellido con paginación
+     */
+    Page<Student> findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(
+            String firstName, String lastName, Pageable pageable);
+}

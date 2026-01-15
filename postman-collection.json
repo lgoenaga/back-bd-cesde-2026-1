@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "Student Information System API",
-    "description": "REST API for Student Information System - CESDE 2026",
+    "name": "Student Information System API v2.1.0",
+    "description": "REST API for Student Information System - CESDE 2026\n\nCaracterísticas:\n- Autenticación JWT\n- CORS configurado\n- Paginación completa (33 endpoints paginados)\n- 170+ endpoints totales\n- Gestión completa de Usuarios y Roles\n\nNuevo en v2.1.0:\n- Paginación implementada en todos los endpoints principales\n- Parámetros: page, size, sort\n- Metadatos de paginación incluidos\n\nNota: Todos los endpoints marcados con 'Paginated' soportan los siguientes parámetros:\n- page: Número de página (default: 0)\n- size: Registros por página (default: 20)\n- sort: Campo y dirección (ej: lastName,asc)",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -173,6 +173,285 @@
               "path": ["auth", "health"]
             },
             "description": "Verifica el estado del servicio de autenticación."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pagination Examples",
+      "description": "Ejemplos de endpoints con paginación. Todos los endpoints principales tienen versión paginada agregando /paged al path.",
+      "item": [
+        {
+          "name": "Students Paginated - Default (page 0, size 20)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/students/paged",
+              "host": ["{{base_url}}"],
+              "path": ["students", "paged"]
+            },
+            "description": "Obtiene la primera página de estudiantes con valores por defecto (página 0, 20 registros, ordenado por id desc)"
+          }
+        },
+        {
+          "name": "Students Paginated - Custom (page 1, size 50, sorted)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/students/paged?page=1&size=50&sort=lastName,asc",
+              "host": ["{{base_url}}"],
+              "path": ["students", "paged"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Número de página (0-indexed)"
+                },
+                {
+                  "key": "size",
+                  "value": "50",
+                  "description": "Registros por página"
+                },
+                {
+                  "key": "sort",
+                  "value": "lastName,asc",
+                  "description": "Campo,dirección (asc/desc)"
+                }
+              ]
+            },
+            "description": "Segunda página con 50 registros ordenados por apellido ascendente"
+          }
+        },
+        {
+          "name": "Students Active - Paginated",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/students/active/paged?page=0&size=25",
+              "host": ["{{base_url}}"],
+              "path": ["students", "active", "paged"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "25"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Students Search - Paginated",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/students/search/paged?name=Juan&page=0&size=15&sort=lastName,asc",
+              "host": ["{{base_url}}"],
+              "path": ["students", "search", "paged"],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "Juan"
+                },
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "15"
+                },
+                {
+                  "key": "sort",
+                  "value": "lastName,asc"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Professors Paginated",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/professors/paged?page=0&size=20&sort=lastName,asc",
+              "host": ["{{base_url}}"],
+              "path": ["professors", "paged"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                },
+                {
+                  "key": "sort",
+                  "value": "lastName,asc"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Courses Paginated",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/courses/paged?page=0&size=20&sort=name,asc",
+              "host": ["{{base_url}}"],
+              "path": ["courses", "paged"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                },
+                {
+                  "key": "sort",
+                  "value": "name,asc"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Levels Paginated",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/levels/paged?page=0&size=20",
+              "host": ["{{base_url}}"],
+              "path": ["levels", "paged"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Subjects Paginated",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/subjects/paged?page=0&size=20&sort=name,asc",
+              "host": ["{{base_url}}"],
+              "path": ["subjects", "paged"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                },
+                {
+                  "key": "sort",
+                  "value": "name,asc"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Academic Periods Paginated",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/academic-periods/paged?page=0&size=20&sort=startDate,desc",
+              "host": ["{{base_url}}"],
+              "path": ["academic-periods", "paged"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                },
+                {
+                  "key": "sort",
+                  "value": "startDate,desc"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Users Paginated",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/paged?page=0&size=20&sort=username,asc",
+              "host": ["{{base_url}}"],
+              "path": ["users", "paged"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                },
+                {
+                  "key": "sort",
+                  "value": "username,asc"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Roles Paginated",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/roles/paged?page=0&size=20&sort=name,asc",
+              "host": ["{{base_url}}"],
+              "path": ["roles", "paged"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                },
+                {
+                  "key": "sort",
+                  "value": "name,asc"
+                }
+              ]
+            }
           }
         }
       ]

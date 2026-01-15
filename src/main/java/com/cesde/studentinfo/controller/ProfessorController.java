@@ -1,6 +1,7 @@
 package com.cesde.studentinfo.controller;
 
 import com.cesde.studentinfo.dto.ApiResponse;
+import com.cesde.studentinfo.dto.PagedResponse;
 import com.cesde.studentinfo.dto.ProfessorDTO;
 import com.cesde.studentinfo.dto.ProfessorResponseDTO;
 import com.cesde.studentinfo.exception.ResourceNotFoundException;
@@ -9,6 +10,10 @@ import com.cesde.studentinfo.service.ProfessorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -145,6 +150,59 @@ public class ProfessorController {
         log.info("GET /professors/count - Counting professors");
         long count = professorService.countProfessors();
         return ResponseEntity.ok(ApiResponse.success(count, "Count retrieved successfully"));
+    }
+
+    // ==================== PAGINATED ENDPOINTS ====================
+
+    @GetMapping("/paged")
+    public ResponseEntity<ApiResponse<PagedResponse<ProfessorResponseDTO>>> getAllProfessorsPaginated(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "id,desc") String[] sort) {
+
+        log.info("GET /professors/paged - Fetching professors page={}, size={}", page, size);
+        Pageable pageable = createPageable(page, size, sort);
+        Page<Professor> professorPage = professorService.getAllProfessorsPaginated(pageable);
+        PagedResponse<ProfessorResponseDTO> response = PagedResponse.from(
+                professorPage.map(ProfessorResponseDTO::fromEntity));
+        return ResponseEntity.ok(ApiResponse.success(response, "Professors retrieved successfully"));
+    }
+
+    @GetMapping("/active/paged")
+    public ResponseEntity<ApiResponse<PagedResponse<ProfessorResponseDTO>>> getActiveProfessorsPaginated(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "id,desc") String[] sort) {
+
+        log.info("GET /professors/active/paged - Fetching active professors page={}, size={}", page, size);
+        Pageable pageable = createPageable(page, size, sort);
+        Page<Professor> professorPage = professorService.getActiveProfessorsPaginated(pageable);
+        PagedResponse<ProfessorResponseDTO> response = PagedResponse.from(
+                professorPage.map(ProfessorResponseDTO::fromEntity));
+        return ResponseEntity.ok(ApiResponse.success(response, "Active professors retrieved successfully"));
+    }
+
+    @GetMapping("/search/paged")
+    public ResponseEntity<ApiResponse<PagedResponse<ProfessorResponseDTO>>> searchProfessorsPaginated(
+            @RequestParam String name,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "lastName,asc") String[] sort) {
+
+        log.info("GET /professors/search/paged - Searching professors name={}, page={}, size={}", name, page, size);
+        Pageable pageable = createPageable(page, size, sort);
+        Page<Professor> professorPage = professorService.searchProfessorsByNamePaginated(name, pageable);
+        PagedResponse<ProfessorResponseDTO> response = PagedResponse.from(
+                professorPage.map(ProfessorResponseDTO::fromEntity));
+        return ResponseEntity.ok(ApiResponse.success(response, "Search completed successfully"));
+    }
+
+    private Pageable createPageable(int page, int size, String[] sort) {
+        String sortBy = sort.length > 0 ? sort[0] : "id";
+        String direction = sort.length > 1 ? sort[1] : "desc";
+        Sort.Direction sortDirection = direction.equalsIgnoreCase("asc")
+                ? Sort.Direction.ASC : Sort.Direction.DESC;
+        return PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
     }
 }
 

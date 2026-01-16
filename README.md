@@ -4,7 +4,7 @@
 [![Version](https://img.shields.io/badge/version-2.1.0-blue)]()
 [![Java](https://img.shields.io/badge/Java-17-orange)]()
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.1-green)]()
-[![Endpoints](https://img.shields.io/badge/endpoints-170+-success)]()
+[![Endpoints](https://img.shields.io/badge/endpoints-187+-success)]()
 [![API](https://img.shields.io/badge/API-100%25%20Funcional-brightgreen)]()
 [![Pagination](https://img.shields.io/badge/Pagination-Implemented-blue)]()
 
@@ -12,7 +12,7 @@ Sistema de Información Estudiantil completo desarrollado como REST API con Spri
 
 **✅ 100% Funcional desde Frontend - No requiere acceso directo a la base de datos**
 
-Gestiona: Estudiantes, Profesores, Cursos, Niveles, Materias, Períodos Académicos, Grupos, Inscripciones, **Calificaciones**, **Asistencia**, **Usuarios** y **Roles**.
+Gestiona: Estudiantes, Profesores, Cursos, Niveles, Materias, Períodos Académicos, Grupos, Inscripciones, **Asignaciones de Profesores**, **Calificaciones**, **Asistencia**, **Usuarios** y **Roles**.
 
 ---
 
@@ -869,6 +869,303 @@ curl -X POST http://localhost:8080/api/attendance \
     "notes": "Asistió puntualmente"
   }'
 ```
+
+---
+
+## 🎓 Subject Assignments (Asignación de Profesores a Materias)
+
+### Descripción
+El módulo de **Subject Assignments** permite asignar profesores a materias específicas en un período académico determinado, con información adicional como horarios, aulas y límite de estudiantes.
+
+### Características
+- ✅ **Asignación completa**: Profesor → Materia → Período Académico
+- ✅ **Validaciones**: Verifica existencia de entidades y períodos activos
+- ✅ **Prevención de duplicados**: No permite asignaciones repetidas
+- ✅ **Información adicional**: Horarios, aulas, cupo máximo
+- ✅ **Grupo opcional**: Puede asociarse a un grupo de curso específico
+- ✅ **Soft delete**: Desactivación sin pérdida de datos
+- ✅ **Paginación completa**: Todos los listados con versión paginada
+- ✅ **Filtros múltiples**: Por materia, profesor, período o combinaciones
+
+### Endpoints Disponibles (17 total)
+
+#### 1. Crear Asignación
+```bash
+POST /api/subject-assignments
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "subjectId": 1,
+  "professorId": 1,
+  "academicPeriodId": 1,
+  "groupId": null,
+  "schedule": "Lunes y Miércoles 8:00-10:00",
+  "classroom": "Aula 101",
+  "maxStudents": 30,
+  "isActive": true
+}
+```
+
+**Respuesta (201 Created):**
+```json
+{
+  "success": true,
+  "message": "Subject assignment created successfully",
+  "data": {
+    "id": 1,
+    "subjectId": 1,
+    "subjectName": "Programación I",
+    "subjectCode": "PROG-101",
+    "professorId": 1,
+    "professorFirstName": "Juan",
+    "professorLastName": "Pérez",
+    "professorFullName": "Juan Pérez",
+    "professorEmail": "juan.perez@cesde.edu.co",
+    "academicPeriodId": 1,
+    "academicPeriodName": "2026-1",
+    "academicPeriodStartDate": "2026-01-15",
+    "academicPeriodEndDate": "2026-06-30",
+    "groupId": null,
+    "groupName": null,
+    "schedule": "Lunes y Miércoles 8:00-10:00",
+    "classroom": "Aula 101",
+    "maxStudents": 30,
+    "isActive": true,
+    "createdAt": "2026-01-15T10:30:00",
+    "updatedAt": "2026-01-15T10:30:00"
+  }
+}
+```
+
+#### 2. Listar Todas las Asignaciones
+```bash
+# Sin paginación (todas las asignaciones)
+GET /api/subject-assignments
+
+# Con paginación (recomendado para tablas)
+GET /api/subject-assignments/paged?page=0&size=20&sortBy=id&sortDir=asc
+```
+
+#### 3. Listar Asignaciones Activas
+```bash
+# Sin paginación
+GET /api/subject-assignments/active
+
+# Con paginación
+GET /api/subject-assignments/active/paged?page=0&size=20
+```
+
+#### 4. Obtener Asignación por ID
+```bash
+GET /api/subject-assignments/1
+```
+
+#### 5. Asignaciones por Materia
+```bash
+# Sin paginación
+GET /api/subject-assignments/subject/1
+
+# Con paginación
+GET /api/subject-assignments/subject/1/paged?page=0&size=20
+```
+
+#### 6. Asignaciones por Profesor
+```bash
+# Sin paginación - Ver todas las materias de un profesor
+GET /api/subject-assignments/professor/1
+
+# Con paginación
+GET /api/subject-assignments/professor/1/paged?page=0&size=20
+```
+
+#### 7. Asignaciones por Período Académico
+```bash
+# Sin paginación
+GET /api/subject-assignments/period/1
+
+# Con paginación
+GET /api/subject-assignments/period/1/paged?page=0&size=20
+```
+
+#### 8. Asignaciones por Materia y Período
+```bash
+# Ver qué profesores dictan una materia en un período específico
+GET /api/subject-assignments/subject/1/period/1
+```
+
+#### 9. Actualizar Asignación
+```bash
+PUT /api/subject-assignments/1
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "schedule": "Martes y Jueves 14:00-16:00",
+  "classroom": "Aula 205",
+  "maxStudents": 35,
+  "isActive": true
+}
+```
+
+**Nota:** Solo se actualizan los campos enviados (PATCH-like behavior).
+
+#### 10. Eliminar Asignación (Soft Delete)
+```bash
+DELETE /api/subject-assignments/1
+Authorization: Bearer {token}
+```
+
+Desactiva la asignación (isActive = false) sin eliminar el registro.
+
+#### 11. Eliminar Permanentemente
+```bash
+DELETE /api/subject-assignments/1/permanent
+Authorization: Bearer {token}
+```
+
+**⚠️ Precaución:** Elimina el registro definitivamente de la base de datos.
+
+---
+
+### Casos de Uso
+
+#### Caso 1: Asignar un profesor a una materia
+```bash
+# 1. Obtener lista de materias disponibles
+GET /api/subjects
+
+# 2. Obtener lista de profesores
+GET /api/professors
+
+# 3. Obtener períodos académicos activos
+GET /api/academic-periods
+
+# 4. Crear la asignación
+POST /api/subject-assignments
+{
+  "subjectId": 5,
+  "professorId": 3,
+  "academicPeriodId": 1,
+  "schedule": "Lunes 10:00-12:00, Miércoles 10:00-12:00",
+  "classroom": "Lab 3",
+  "maxStudents": 25
+}
+```
+
+#### Caso 2: Ver el horario completo de un profesor
+```bash
+GET /api/subject-assignments/professor/3
+```
+
+**Respuesta:**
+```json
+{
+  "success": true,
+  "message": "Subject assignments retrieved successfully",
+  "data": [
+    {
+      "id": 1,
+      "subjectName": "Bases de Datos",
+      "schedule": "Lunes 8:00-10:00",
+      "classroom": "Aula 101",
+      ...
+    },
+    {
+      "id": 2,
+      "subjectName": "Programación Web",
+      "schedule": "Miércoles 14:00-16:00",
+      "classroom": "Lab 2",
+      ...
+    }
+  ]
+}
+```
+
+#### Caso 3: Ver qué profesores dictan una materia
+```bash
+GET /api/subject-assignments/subject/5
+```
+
+### Validaciones Implementadas
+
+| Validación | Descripción |
+|------------|-------------|
+| ✅ Materia existe | Verifica que el subjectId sea válido |
+| ✅ Profesor existe | Verifica que el professorId sea válido |
+| ✅ Período existe | Verifica que el academicPeriodId sea válido |
+| ✅ Período activo | Solo permite asignar a períodos activos |
+| ✅ Grupo válido | Si se proporciona groupId, verifica que exista |
+| ✅ Sin duplicados | Previene asignaciones duplicadas (misma combinación) |
+| ✅ Campos opcionales | schedule, classroom, maxStudents, groupId son opcionales |
+
+### Reglas de Negocio
+
+1. **Un profesor puede dictar múltiples materias** en el mismo período
+2. **Una materia puede ser dictada por múltiples profesores** (diferentes grupos/horarios)
+3. **No se permiten asignaciones duplicadas** (misma materia + profesor + período)
+4. **Solo se puede asignar a períodos activos** (isActive = true)
+5. **Soft delete por defecto** - Los registros se desactivan, no se eliminan
+6. **Grupo opcional** - Se puede asignar sin especificar un grupo de curso
+
+### Estructura de Response
+
+Cada asignación incluye información completa de las entidades relacionadas:
+
+```json
+{
+  "id": 1,
+  
+  "subjectId": 1,
+  "subjectName": "Programación I",
+  "subjectCode": "PROG-101",
+  
+  "professorId": 1,
+  "professorFirstName": "Juan",
+  "professorLastName": "Pérez",
+  "professorFullName": "Juan Pérez",
+  "professorEmail": "juan.perez@cesde.edu.co",
+  
+  "academicPeriodId": 1,
+  "academicPeriodName": "2026-1",
+  "academicPeriodStartDate": "2026-01-15",
+  "academicPeriodEndDate": "2026-06-30",
+  
+  "groupId": null,
+  "groupName": null,
+  
+  "schedule": "Lunes y Miércoles 8:00-10:00",
+  "classroom": "Aula 101",
+  "maxStudents": 30,
+  "isActive": true,
+  
+  "createdAt": "2026-01-15T10:30:00",
+  "updatedAt": "2026-01-15T10:30:00"
+}
+```
+
+### Resumen de Endpoints
+
+| Método | Endpoint | Descripción | Paginado |
+|--------|----------|-------------|----------|
+| POST | `/subject-assignments` | Crear asignación | - |
+| GET | `/subject-assignments` | Listar todas | ❌ |
+| GET | `/subject-assignments/paged` | Listar todas | ✅ |
+| GET | `/subject-assignments/active` | Listar activas | ❌ |
+| GET | `/subject-assignments/active/paged` | Listar activas | ✅ |
+| GET | `/subject-assignments/{id}` | Obtener por ID | - |
+| GET | `/subject-assignments/subject/{id}` | Por materia | ❌ |
+| GET | `/subject-assignments/subject/{id}/paged` | Por materia | ✅ |
+| GET | `/subject-assignments/professor/{id}` | Por profesor | ❌ |
+| GET | `/subject-assignments/professor/{id}/paged` | Por profesor | ✅ |
+| GET | `/subject-assignments/period/{id}` | Por período | ❌ |
+| GET | `/subject-assignments/period/{id}/paged` | Por período | ✅ |
+| GET | `/subject-assignments/subject/{sid}/period/{pid}` | Por materia y período | ❌ |
+| PUT | `/subject-assignments/{id}` | Actualizar | - |
+| DELETE | `/subject-assignments/{id}` | Eliminar (soft) | - |
+| DELETE | `/subject-assignments/{id}/permanent` | Eliminar permanente | - |
+
+**Total: 17 endpoints** (10 con paginación, 7 sin paginación)
 
 ---
 

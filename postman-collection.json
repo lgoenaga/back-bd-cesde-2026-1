@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "Student Information System API v2.1.0",
-    "description": "REST API for Student Information System - CESDE 2026\n\nCaracterísticas:\n- Autenticación JWT\n- CORS configurado\n- Paginación completa (33 endpoints paginados)\n- 170+ endpoints totales\n- Gestión completa de Usuarios y Roles\n\nNuevo en v2.1.0:\n- Paginación implementada en todos los endpoints principales\n- Parámetros: page, size, sort\n- Metadatos de paginación incluidos\n\nNota: Todos los endpoints marcados con 'Paginated' soportan los siguientes parámetros:\n- page: Número de página (default: 0)\n- size: Registros por página (default: 20)\n- sort: Campo y dirección (ej: lastName,asc)",
+    "name": "Student Information System API v2.3.0",
+    "description": "REST API for Student Information System - CESDE 2026\n\nCaracterísticas:\n- Autenticación JWT completa (login, register, refresh, validate)\n- CORS configurado\n- Paginación completa (39 endpoints paginados)\n- 237+ endpoints totales\n- Gestión completa de Usuarios y Roles\n- CRUD completo para todas las entidades\n\nNuevo en v2.3.0:\n- Agregada sección: Subject Assignments (Asignación de Profesores a Materias)\n- 17 nuevos endpoints para gestión completa de asignaciones\n- 6 endpoints con paginación incluida\n\nNuevo en v2.2.0:\n- Agregadas secciones: Course Enrollments, Academic Periods, Levels, Subjects, Course Groups\n- Ruta de Course Enrollments corregida: /course-enrollments (era /enrollments)\n- Todos los endpoints con JOIN FETCH para evitar LazyInitializationException\n- Endpoints optimizados con @EntityGraph\n\nSecciones disponibles:\n- Health (2 endpoints)\n- Authentication (4 endpoints)\n- Students (10+ endpoints)\n- Professors (10+ endpoints)\n- Courses (10+ endpoints)\n- Levels (8+ endpoints)\n- Subjects (10+ endpoints)\n- Academic Periods (8+ endpoints)\n- Course Groups (9+ endpoints)\n- Course Enrollments (10+ endpoints)\n- Subject Assignments (17 endpoints)\n- Grades (10+ endpoints)\n- Attendance (10+ endpoints)\n- Users (15+ endpoints)\n- Roles (10+ endpoints)\n- User Roles (10+ endpoints)\n\nNota: Todos los endpoints marcados con 'Paginated' soportan los siguientes parámetros:\n- page: Número de página (default: 0)\n- size: Registros por página (default: 20)\n- sort: Campo y dirección (ej: lastName,asc)",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -22,8 +22,12 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/health",
-              "host": ["{{base_url}}"],
-              "path": ["health"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "health"
+              ]
             }
           }
         },
@@ -34,8 +38,13 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/health/ping",
-              "host": ["{{base_url}}"],
-              "path": ["health", "ping"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "health",
+                "ping"
+              ]
             }
           }
         }
@@ -77,8 +86,13 @@
             },
             "url": {
               "raw": "{{base_url}}/auth/login",
-              "host": ["{{base_url}}"],
-              "path": ["auth", "login"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
             },
             "description": "Inicia sesión y obtiene un token JWT. El token se guarda automáticamente en la variable de colección jwt_token."
           }
@@ -99,8 +113,13 @@
             },
             "url": {
               "raw": "{{base_url}}/auth/register",
-              "host": ["{{base_url}}"],
-              "path": ["auth", "register"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
             },
             "description": "Registra un nuevo usuario en el sistema."
           }
@@ -121,8 +140,13 @@
             },
             "url": {
               "raw": "{{base_url}}/auth/validate-token",
-              "host": ["{{base_url}}"],
-              "path": ["auth", "validate-token"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "validate-token"
+              ]
             },
             "description": "Valida si un token JWT es válido y no ha expirado."
           }
@@ -156,8 +180,13 @@
             ],
             "url": {
               "raw": "{{base_url}}/auth/refresh-token",
-              "host": ["{{base_url}}"],
-              "path": ["auth", "refresh-token"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "refresh-token"
+              ]
             },
             "description": "Renueva un token JWT existente. El nuevo token se guarda automáticamente."
           }
@@ -169,8 +198,13 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/auth/health",
-              "host": ["{{base_url}}"],
-              "path": ["auth", "health"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "health"
+              ]
             },
             "description": "Verifica el estado del servicio de autenticación."
           }
@@ -188,8 +222,13 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/students/paged",
-              "host": ["{{base_url}}"],
-              "path": ["students", "paged"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "students",
+                "paged"
+              ]
             },
             "description": "Obtiene la primera página de estudiantes con valores por defecto (página 0, 20 registros, ordenado por id desc)"
           }
@@ -201,8 +240,13 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/students/paged?page=1&size=50&sort=lastName,asc",
-              "host": ["{{base_url}}"],
-              "path": ["students", "paged"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "students",
+                "paged"
+              ],
               "query": [
                 {
                   "key": "page",
@@ -231,8 +275,14 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/students/active/paged?page=0&size=25",
-              "host": ["{{base_url}}"],
-              "path": ["students", "active", "paged"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "students",
+                "active",
+                "paged"
+              ],
               "query": [
                 {
                   "key": "page",
@@ -253,8 +303,14 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/students/search/paged?name=Juan&page=0&size=15&sort=lastName,asc",
-              "host": ["{{base_url}}"],
-              "path": ["students", "search", "paged"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "students",
+                "search",
+                "paged"
+              ],
               "query": [
                 {
                   "key": "name",
@@ -283,8 +339,13 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/professors/paged?page=0&size=20&sort=lastName,asc",
-              "host": ["{{base_url}}"],
-              "path": ["professors", "paged"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "professors",
+                "paged"
+              ],
               "query": [
                 {
                   "key": "page",
@@ -309,8 +370,13 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/courses/paged?page=0&size=20&sort=name,asc",
-              "host": ["{{base_url}}"],
-              "path": ["courses", "paged"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "courses",
+                "paged"
+              ],
               "query": [
                 {
                   "key": "page",
@@ -335,8 +401,13 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/levels/paged?page=0&size=20",
-              "host": ["{{base_url}}"],
-              "path": ["levels", "paged"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "levels",
+                "paged"
+              ],
               "query": [
                 {
                   "key": "page",
@@ -357,8 +428,13 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/subjects/paged?page=0&size=20&sort=name,asc",
-              "host": ["{{base_url}}"],
-              "path": ["subjects", "paged"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subjects",
+                "paged"
+              ],
               "query": [
                 {
                   "key": "page",
@@ -383,8 +459,13 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/academic-periods/paged?page=0&size=20&sort=startDate,desc",
-              "host": ["{{base_url}}"],
-              "path": ["academic-periods", "paged"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "academic-periods",
+                "paged"
+              ],
               "query": [
                 {
                   "key": "page",
@@ -409,8 +490,13 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/users/paged?page=0&size=20&sort=username,asc",
-              "host": ["{{base_url}}"],
-              "path": ["users", "paged"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "paged"
+              ],
               "query": [
                 {
                   "key": "page",
@@ -435,8 +521,13 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/roles/paged?page=0&size=20&sort=name,asc",
-              "host": ["{{base_url}}"],
-              "path": ["roles", "paged"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "roles",
+                "paged"
+              ],
               "query": [
                 {
                   "key": "page",
@@ -466,8 +557,12 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/students",
-              "host": ["{{base_url}}"],
-              "path": ["students"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "students"
+              ]
             }
           }
         },
@@ -478,8 +573,13 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/students/active",
-              "host": ["{{base_url}}"],
-              "path": ["students", "active"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "students",
+                "active"
+              ]
             }
           }
         },
@@ -490,8 +590,13 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/students/1",
-              "host": ["{{base_url}}"],
-              "path": ["students", "1"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "students",
+                "1"
+              ]
             }
           }
         },
@@ -502,8 +607,13 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/students/search?name=Juan",
-              "host": ["{{base_url}}"],
-              "path": ["students", "search"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "students",
+                "search"
+              ],
               "query": [
                 {
                   "key": "name",
@@ -529,8 +639,12 @@
             },
             "url": {
               "raw": "{{base_url}}/students",
-              "host": ["{{base_url}}"],
-              "path": ["students"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "students"
+              ]
             }
           }
         },
@@ -550,8 +664,13 @@
             },
             "url": {
               "raw": "{{base_url}}/students/1",
-              "host": ["{{base_url}}"],
-              "path": ["students", "1"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "students",
+                "1"
+              ]
             }
           }
         },
@@ -562,8 +681,14 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/students/1/deactivate",
-              "host": ["{{base_url}}"],
-              "path": ["students", "1", "deactivate"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "students",
+                "1",
+                "deactivate"
+              ]
             }
           }
         },
@@ -574,8 +699,13 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/students/1",
-              "host": ["{{base_url}}"],
-              "path": ["students", "1"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "students",
+                "1"
+              ]
             }
           }
         }
@@ -591,8 +721,12 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/professors",
-              "host": ["{{base_url}}"],
-              "path": ["professors"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "professors"
+              ]
             }
           }
         },
@@ -603,8 +737,13 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/professors/active",
-              "host": ["{{base_url}}"],
-              "path": ["professors", "active"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "professors",
+                "active"
+              ]
             }
           }
         },
@@ -615,8 +754,13 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/professors/1",
-              "host": ["{{base_url}}"],
-              "path": ["professors", "1"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "professors",
+                "1"
+              ]
             }
           }
         },
@@ -636,8 +780,12 @@
             },
             "url": {
               "raw": "{{base_url}}/professors",
-              "host": ["{{base_url}}"],
-              "path": ["professors"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "professors"
+              ]
             }
           }
         },
@@ -657,8 +805,13 @@
             },
             "url": {
               "raw": "{{base_url}}/professors/1",
-              "host": ["{{base_url}}"],
-              "path": ["professors", "1"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "professors",
+                "1"
+              ]
             }
           }
         },
@@ -669,8 +822,13 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/professors/1",
-              "host": ["{{base_url}}"],
-              "path": ["professors", "1"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "professors",
+                "1"
+              ]
             }
           }
         }
@@ -686,8 +844,12 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/courses",
-              "host": ["{{base_url}}"],
-              "path": ["courses"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "courses"
+              ]
             }
           }
         },
@@ -698,8 +860,13 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/courses/active",
-              "host": ["{{base_url}}"],
-              "path": ["courses", "active"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "courses",
+                "active"
+              ]
             }
           }
         },
@@ -710,8 +877,13 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/courses/1",
-              "host": ["{{base_url}}"],
-              "path": ["courses", "1"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "courses",
+                "1"
+              ]
             }
           }
         },
@@ -722,8 +894,14 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/courses/code/DEV-101",
-              "host": ["{{base_url}}"],
-              "path": ["courses", "code", "DEV-101"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "courses",
+                "code",
+                "DEV-101"
+              ]
             }
           }
         },
@@ -743,8 +921,12 @@
             },
             "url": {
               "raw": "{{base_url}}/courses",
-              "host": ["{{base_url}}"],
-              "path": ["courses"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "courses"
+              ]
             }
           }
         },
@@ -764,8 +946,13 @@
             },
             "url": {
               "raw": "{{base_url}}/courses/1",
-              "host": ["{{base_url}}"],
-              "path": ["courses", "1"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "courses",
+                "1"
+              ]
             }
           }
         },
@@ -776,8 +963,13 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/courses/1",
-              "host": ["{{base_url}}"],
-              "path": ["courses", "1"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "courses",
+                "1"
+              ]
             }
           }
         }
@@ -793,8 +985,12 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/grades",
-              "host": ["{{base_url}}"],
-              "path": ["grades"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "grades"
+              ]
             }
           }
         },
@@ -805,8 +1001,13 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/grades/1",
-              "host": ["{{base_url}}"],
-              "path": ["grades", "1"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "grades",
+                "1"
+              ]
             }
           }
         },
@@ -817,8 +1018,14 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/grades/student/1",
-              "host": ["{{base_url}}"],
-              "path": ["grades", "student", "1"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "grades",
+                "student",
+                "1"
+              ]
             }
           }
         },
@@ -838,8 +1045,12 @@
             },
             "url": {
               "raw": "{{base_url}}/grades",
-              "host": ["{{base_url}}"],
-              "path": ["grades"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "grades"
+              ]
             }
           }
         },
@@ -859,8 +1070,13 @@
             },
             "url": {
               "raw": "{{base_url}}/grades/1",
-              "host": ["{{base_url}}"],
-              "path": ["grades", "1"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "grades",
+                "1"
+              ]
             }
           }
         },
@@ -871,8 +1087,13 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/grades/1",
-              "host": ["{{base_url}}"],
-              "path": ["grades", "1"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "grades",
+                "1"
+              ]
             }
           }
         }
@@ -888,8 +1109,12 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/attendance",
-              "host": ["{{base_url}}"],
-              "path": ["attendance"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "attendance"
+              ]
             }
           }
         },
@@ -900,8 +1125,13 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/attendance/1",
-              "host": ["{{base_url}}"],
-              "path": ["attendance", "1"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "attendance",
+                "1"
+              ]
             }
           }
         },
@@ -912,8 +1142,14 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/attendance/student/1",
-              "host": ["{{base_url}}"],
-              "path": ["attendance", "student", "1"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "attendance",
+                "student",
+                "1"
+              ]
             }
           }
         },
@@ -924,8 +1160,14 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/attendance/session/1",
-              "host": ["{{base_url}}"],
-              "path": ["attendance", "session", "1"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "attendance",
+                "session",
+                "1"
+              ]
             }
           }
         },
@@ -936,8 +1178,13 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/attendance/range?startDate=2026-01-01&endDate=2026-01-31",
-              "host": ["{{base_url}}"],
-              "path": ["attendance", "range"],
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "attendance",
+                "range"
+              ],
               "query": [
                 {
                   "key": "startDate",
@@ -967,8 +1214,12 @@
             },
             "url": {
               "raw": "{{base_url}}/attendance",
-              "host": ["{{base_url}}"],
-              "path": ["attendance"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "attendance"
+              ]
             }
           }
         },
@@ -988,8 +1239,13 @@
             },
             "url": {
               "raw": "{{base_url}}/attendance/1",
-              "host": ["{{base_url}}"],
-              "path": ["attendance", "1"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "attendance",
+                "1"
+              ]
             }
           }
         },
@@ -1000,8 +1256,13 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/attendance/1",
-              "host": ["{{base_url}}"],
-              "path": ["attendance", "1"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "attendance",
+                "1"
+              ]
             }
           }
         }
@@ -1017,8 +1278,12 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/users",
-              "host": ["{{base_url}}"],
-              "path": ["users"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users"
+              ]
             }
           }
         },
@@ -1029,8 +1294,13 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/users/active",
-              "host": ["{{base_url}}"],
-              "path": ["users", "active"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "active"
+              ]
             }
           }
         },
@@ -1041,8 +1311,13 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/users/1",
-              "host": ["{{base_url}}"],
-              "path": ["users", "1"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "1"
+              ]
             }
           }
         },
@@ -1053,8 +1328,14 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/users/username/admin",
-              "host": ["{{base_url}}"],
-              "path": ["users", "username", "admin"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "username",
+                "admin"
+              ]
             }
           }
         },
@@ -1065,8 +1346,14 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/users/email/admin@cesde.edu.co",
-              "host": ["{{base_url}}"],
-              "path": ["users", "email", "admin@cesde.edu.co"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "email",
+                "admin@cesde.edu.co"
+              ]
             }
           }
         },
@@ -1077,9 +1364,19 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/users/search?username=admin",
-              "host": ["{{base_url}}"],
-              "path": ["users", "search"],
-              "query": [{"key": "username", "value": "admin"}]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "username",
+                  "value": "admin"
+                }
+              ]
             }
           }
         },
@@ -1090,8 +1387,14 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/users/role/Administrador",
-              "host": ["{{base_url}}"],
-              "path": ["users", "role", "Administrador"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "role",
+                "Administrador"
+              ]
             }
           }
         },
@@ -1102,8 +1405,13 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/users/count",
-              "host": ["{{base_url}}"],
-              "path": ["users", "count"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "count"
+              ]
             }
           }
         },
@@ -1111,15 +1419,24 @@
           "name": "Create User",
           "request": {
             "method": "POST",
-            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"username\": \"newuser\",\n  \"password\": \"password123\",\n  \"email\": \"newuser@cesde.edu.co\",\n  \"isActive\": true,\n  \"roleIds\": [2]\n}"
             },
             "url": {
               "raw": "{{base_url}}/users",
-              "host": ["{{base_url}}"],
-              "path": ["users"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users"
+              ]
             }
           }
         },
@@ -1127,15 +1444,25 @@
           "name": "Update User",
           "request": {
             "method": "PUT",
-            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"username\": \"updateduser\",\n  \"email\": \"updated@cesde.edu.co\",\n  \"isActive\": true,\n  \"roleIds\": [2]\n}"
             },
             "url": {
               "raw": "{{base_url}}/users/1",
-              "host": ["{{base_url}}"],
-              "path": ["users", "1"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "1"
+              ]
             }
           }
         },
@@ -1146,8 +1473,14 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/users/1/deactivate",
-              "host": ["{{base_url}}"],
-              "path": ["users", "1", "deactivate"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "1",
+                "deactivate"
+              ]
             }
           }
         },
@@ -1158,8 +1491,15 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/users/1/roles/2",
-              "host": ["{{base_url}}"],
-              "path": ["users", "1", "roles", "2"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "1",
+                "roles",
+                "2"
+              ]
             }
           }
         },
@@ -1170,8 +1510,15 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/users/1/roles/2",
-              "host": ["{{base_url}}"],
-              "path": ["users", "1", "roles", "2"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "1",
+                "roles",
+                "2"
+              ]
             }
           }
         },
@@ -1182,8 +1529,13 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/users/1",
-              "host": ["{{base_url}}"],
-              "path": ["users", "1"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "1"
+              ]
             }
           }
         }
@@ -1199,8 +1551,12 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/roles",
-              "host": ["{{base_url}}"],
-              "path": ["roles"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "roles"
+              ]
             }
           }
         },
@@ -1211,8 +1567,13 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/roles/enabled",
-              "host": ["{{base_url}}"],
-              "path": ["roles", "enabled"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "roles",
+                "enabled"
+              ]
             }
           }
         },
@@ -1223,8 +1584,13 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/roles/1",
-              "host": ["{{base_url}}"],
-              "path": ["roles", "1"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "roles",
+                "1"
+              ]
             }
           }
         },
@@ -1235,8 +1601,14 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/roles/name/Administrador",
-              "host": ["{{base_url}}"],
-              "path": ["roles", "name", "Administrador"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "roles",
+                "name",
+                "Administrador"
+              ]
             }
           }
         },
@@ -1247,9 +1619,19 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/roles/search?name=Admin",
-              "host": ["{{base_url}}"],
-              "path": ["roles", "search"],
-              "query": [{"key": "name", "value": "Admin"}]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "roles",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "Admin"
+                }
+              ]
             }
           }
         },
@@ -1260,8 +1642,13 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/roles/count",
-              "host": ["{{base_url}}"],
-              "path": ["roles", "count"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "roles",
+                "count"
+              ]
             }
           }
         },
@@ -1272,8 +1659,13 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/roles/with-user-count",
-              "host": ["{{base_url}}"],
-              "path": ["roles", "with-user-count"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "roles",
+                "with-user-count"
+              ]
             }
           }
         },
@@ -1284,8 +1676,14 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/roles/1/user-count",
-              "host": ["{{base_url}}"],
-              "path": ["roles", "1", "user-count"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "roles",
+                "1",
+                "user-count"
+              ]
             }
           }
         },
@@ -1293,15 +1691,24 @@
           "name": "Create Role",
           "request": {
             "method": "POST",
-            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Coordinador\",\n  \"description\": \"Coordinador académico\",\n  \"enabled\": true\n}"
             },
             "url": {
               "raw": "{{base_url}}/roles",
-              "host": ["{{base_url}}"],
-              "path": ["roles"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "roles"
+              ]
             }
           }
         },
@@ -1309,15 +1716,25 @@
           "name": "Update Role",
           "request": {
             "method": "PUT",
-            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Coordinador\",\n  \"description\": \"Coordinador académico actualizado\",\n  \"enabled\": true\n}"
             },
             "url": {
               "raw": "{{base_url}}/roles/1",
-              "host": ["{{base_url}}"],
-              "path": ["roles", "1"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "roles",
+                "1"
+              ]
             }
           }
         },
@@ -1328,8 +1745,14 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/roles/1/toggle-status",
-              "host": ["{{base_url}}"],
-              "path": ["roles", "1", "toggle-status"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "roles",
+                "1",
+                "toggle-status"
+              ]
             }
           }
         },
@@ -1340,8 +1763,13 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/roles/1",
-              "host": ["{{base_url}}"],
-              "path": ["roles", "1"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "roles",
+                "1"
+              ]
             }
           }
         }
@@ -1357,8 +1785,12 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/user-roles",
-              "host": ["{{base_url}}"],
-              "path": ["user-roles"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "user-roles"
+              ]
             }
           }
         },
@@ -1369,8 +1801,14 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/user-roles/user/1",
-              "host": ["{{base_url}}"],
-              "path": ["user-roles", "user", "1"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "user-roles",
+                "user",
+                "1"
+              ]
             }
           }
         },
@@ -1381,8 +1819,14 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/user-roles/role/1",
-              "host": ["{{base_url}}"],
-              "path": ["user-roles", "role", "1"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "user-roles",
+                "role",
+                "1"
+              ]
             }
           }
         },
@@ -1393,8 +1837,14 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/user-roles/username/admin",
-              "host": ["{{base_url}}"],
-              "path": ["user-roles", "username", "admin"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "user-roles",
+                "username",
+                "admin"
+              ]
             }
           }
         },
@@ -1405,8 +1855,14 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/user-roles/role-name/Administrador",
-              "host": ["{{base_url}}"],
-              "path": ["user-roles", "role-name", "Administrador"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "user-roles",
+                "role-name",
+                "Administrador"
+              ]
             }
           }
         },
@@ -1417,9 +1873,19 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/user-roles/recent?days=7",
-              "host": ["{{base_url}}"],
-              "path": ["user-roles", "recent"],
-              "query": [{"key": "days", "value": "7"}]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "user-roles",
+                "recent"
+              ],
+              "query": [
+                {
+                  "key": "days",
+                  "value": "7"
+                }
+              ]
             }
           }
         },
@@ -1430,8 +1896,14 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/user-roles/assigned-by/1",
-              "host": ["{{base_url}}"],
-              "path": ["user-roles", "assigned-by", "1"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "user-roles",
+                "assigned-by",
+                "1"
+              ]
             }
           }
         },
@@ -1439,15 +1911,24 @@
           "name": "Assign Role to User",
           "request": {
             "method": "POST",
-            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userId\": 1,\n  \"roleId\": 2,\n  \"assignedByUserId\": 1\n}"
             },
             "url": {
               "raw": "{{base_url}}/user-roles",
-              "host": ["{{base_url}}"],
-              "path": ["user-roles"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "user-roles"
+              ]
             }
           }
         },
@@ -1458,9 +1939,1642 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/user-roles/user/1/role/2",
-              "host": ["{{base_url}}"],
-              "path": ["user-roles", "user", "1", "role", "2"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "user-roles",
+                "user",
+                "1",
+                "role",
+                "2"
+              ]
             }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Course Enrollments",
+      "description": "Gestión de inscripciones de estudiantes a cursos",
+      "item": [
+        {
+          "name": "Get All Course Enrollments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/course-enrollments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "course-enrollments"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Course Enrollment by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/course-enrollments/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "course-enrollments",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Enrollments by Student",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/course-enrollments/student/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "course-enrollments",
+                "student",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Enrollments by Course",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/course-enrollments/course/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "course-enrollments",
+                "course",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Enrollments by Period",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/course-enrollments/period/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "course-enrollments",
+                "period",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Course Enrollment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentId\": 1,\n  \"courseId\": 1,\n  \"academicPeriodId\": 1,\n  \"enrollmentDate\": \"2026-01-15\",\n  \"enrollmentStatus\": \"ACTIVE\",\n  \"notes\": \"Inscripción regular\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/course-enrollments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "course-enrollments"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Enrollment Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/course-enrollments/1/status?status=COMPLETED",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "course-enrollments",
+                "1",
+                "status"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "COMPLETED"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Course Enrollment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"enrollmentStatus\": \"WITHDRAWN\",\n  \"notes\": \"Estudiante retirado por motivos personales\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/course-enrollments/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "course-enrollments",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Course Enrollment",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/course-enrollments/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "course-enrollments",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Count Course Enrollments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/course-enrollments/count",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "course-enrollments",
+                "count"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Academic Periods",
+      "description": "Gestión de períodos académicos",
+      "item": [
+        {
+          "name": "Get All Academic Periods",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/academic-periods",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "academic-periods"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get All Academic Periods Paginated",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/academic-periods/paged?page=0&size=20&sort=startDate,desc",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "academic-periods",
+                "paged"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                },
+                {
+                  "key": "sort",
+                  "value": "startDate,desc"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Academic Period by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/academic-periods/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "academic-periods",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Current Academic Period",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/academic-periods/current",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "academic-periods",
+                "current"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Active Academic Periods",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/academic-periods/active",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "academic-periods",
+                "active"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Academic Period",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"2026-1\",\n  \"startDate\": \"2026-02-01\",\n  \"endDate\": \"2026-06-30\",\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/academic-periods",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "academic-periods"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Academic Period",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"2026-1\",\n  \"startDate\": \"2026-02-01\",\n  \"endDate\": \"2026-06-30\",\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/academic-periods/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "academic-periods",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Academic Period",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/academic-periods/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "academic-periods",
+                "1"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Levels",
+      "description": "Gestión de niveles académicos",
+      "item": [
+        {
+          "name": "Get All Levels",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/levels",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "levels"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get All Levels Paginated",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/levels/paged?page=0&size=20&sort=levelNumber,asc",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "levels",
+                "paged"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                },
+                {
+                  "key": "sort",
+                  "value": "levelNumber,asc"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Level by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/levels/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "levels",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Levels by Course",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/levels/course/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "levels",
+                "course",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Levels by Course Paginated",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/levels/course/1/paged?page=0&size=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "levels",
+                "course",
+                "1",
+                "paged"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Level",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"courseId\": 1,\n  \"levelNumber\": 1,\n  \"name\": \"Nivel 1\",\n  \"description\": \"Nivel básico del curso\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/levels",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "levels"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Level",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Nivel 1 - Actualizado\",\n  \"description\": \"Descripción actualizada\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/levels/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "levels",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Level",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/levels/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "levels",
+                "1"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subjects",
+      "description": "Gestión de materias",
+      "item": [
+        {
+          "name": "Get All Subjects",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/subjects",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subjects"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get All Subjects Paginated",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/subjects/paged?page=0&size=20&sort=name,asc",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subjects",
+                "paged"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                },
+                {
+                  "key": "sort",
+                  "value": "name,asc"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Subject by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/subjects/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subjects",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Subject by Code",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/subjects/code/MATH101",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subjects",
+                "code",
+                "MATH101"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Subjects by Level",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/subjects/level/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subjects",
+                "level",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Active Subjects",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/subjects/active",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subjects",
+                "active"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search Subjects by Name",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/subjects/search?name=Matemáticas",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subjects",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "Matemáticas"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Subject",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"levelId\": 1,\n  \"code\": \"MATH101\",\n  \"name\": \"Matemáticas Básicas\",\n  \"description\": \"Fundamentos de matemáticas\",\n  \"credits\": 3.0,\n  \"hoursPerWeek\": 4,\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/subjects",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subjects"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Subject",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Matemáticas Básicas - Actualizado\",\n  \"description\": \"Descripción actualizada\",\n  \"credits\": 3.5,\n  \"hoursPerWeek\": 5\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/subjects/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subjects",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Subject",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/subjects/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subjects",
+                "1"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Course Groups",
+      "description": "Gestión de grupos de curso",
+      "item": [
+        {
+          "name": "Get All Course Groups",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/course-groups",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "course-groups"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Course Group by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/course-groups/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "course-groups",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Course Group by Code",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/course-groups/code/GRP-001",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "course-groups",
+                "code",
+                "GRP-001"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Course Groups by Course",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/course-groups/course/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "course-groups",
+                "course",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Course Groups by Period",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/course-groups/period/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "course-groups",
+                "period",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Available Course Groups",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/course-groups/available",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "course-groups",
+                "available"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Course Group",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"courseId\": 1,\n  \"levelId\": 1,\n  \"academicPeriodId\": 1,\n  \"groupCode\": \"GRP-001\",\n  \"maxStudents\": 30,\n  \"schedule\": \"Lunes y Miércoles 8:00-10:00\",\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/course-groups",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "course-groups"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Course Group",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"maxStudents\": 35,\n  \"schedule\": \"Lunes y Miércoles 8:00-11:00\",\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/course-groups/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "course-groups",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Course Group",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/course-groups/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "course-groups",
+                "1"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subject Assignments",
+      "item": [
+        {
+          "name": "1. Create Assignment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subjectId\": 1,\n  \"professorId\": 1,\n  \"academicPeriodId\": 1,\n  \"groupId\": null,\n  \"schedule\": \"Lunes y Miércoles 8:00-10:00\",\n  \"classroom\": \"Aula 101\",\n  \"maxStudents\": 30,\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/subject-assignments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subject-assignments"
+              ]
+            },
+            "description": "Crea una nueva asignación de profesor a materia para un período académico específico"
+          }
+        },
+        {
+          "name": "2. Get All Assignments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/subject-assignments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subject-assignments"
+              ]
+            },
+            "description": "Obtiene todas las asignaciones (sin paginación)"
+          }
+        },
+        {
+          "name": "3. Get All Assignments (Paginated)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/subject-assignments/paged?page=0&size=20&sortBy=id&sortDir=asc",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subject-assignments",
+                "paged"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "id"
+                },
+                {
+                  "key": "sortDir",
+                  "value": "asc"
+                }
+              ]
+            },
+            "description": "Obtiene todas las asignaciones con paginación"
+          }
+        },
+        {
+          "name": "4. Get Active Assignments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/subject-assignments/active",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subject-assignments",
+                "active"
+              ]
+            },
+            "description": "Obtiene solo las asignaciones activas"
+          }
+        },
+        {
+          "name": "5. Get Active Assignments (Paginated)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/subject-assignments/active/paged?page=0&size=20",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subject-assignments",
+                "active",
+                "paged"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Obtiene las asignaciones activas con paginación"
+          }
+        },
+        {
+          "name": "6. Get Assignment by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/subject-assignments/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subject-assignments",
+                "1"
+              ]
+            },
+            "description": "Obtiene una asignación específica por su ID"
+          }
+        },
+        {
+          "name": "7. Get Assignments by Subject",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/subject-assignments/subject/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subject-assignments",
+                "subject",
+                "1"
+              ]
+            },
+            "description": "Obtiene todas las asignaciones de una materia específica"
+          }
+        },
+        {
+          "name": "8. Get Assignments by Subject (Paginated)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/subject-assignments/subject/1/paged?page=0&size=20",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subject-assignments",
+                "subject",
+                "1",
+                "paged"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Obtiene las asignaciones de una materia con paginación"
+          }
+        },
+        {
+          "name": "9. Get Assignments by Professor",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/subject-assignments/professor/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subject-assignments",
+                "professor",
+                "1"
+              ]
+            },
+            "description": "Obtiene todas las materias asignadas a un profesor (útil para ver su horario completo)"
+          }
+        },
+        {
+          "name": "10. Get Assignments by Professor (Paginated)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/subject-assignments/professor/1/paged?page=0&size=20",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subject-assignments",
+                "professor",
+                "1",
+                "paged"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Obtiene las asignaciones de un profesor con paginación"
+          }
+        },
+        {
+          "name": "11. Get Assignments by Period",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/subject-assignments/period/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subject-assignments",
+                "period",
+                "1"
+              ]
+            },
+            "description": "Obtiene todas las asignaciones de un período académico"
+          }
+        },
+        {
+          "name": "12. Get Assignments by Period (Paginated)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/subject-assignments/period/1/paged?page=0&size=20",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subject-assignments",
+                "period",
+                "1",
+                "paged"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Obtiene las asignaciones de un período académico con paginación"
+          }
+        },
+        {
+          "name": "13. Get Assignments by Subject and Period",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/subject-assignments/subject/1/period/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subject-assignments",
+                "subject",
+                "1",
+                "period",
+                "1"
+              ]
+            },
+            "description": "Obtiene las asignaciones de una materia en un período académico específico"
+          }
+        },
+        {
+          "name": "14. Update Assignment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"schedule\": \"Martes y Jueves 14:00-16:00\",\n  \"classroom\": \"Aula 205\",\n  \"maxStudents\": 35,\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/subject-assignments/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subject-assignments",
+                "1"
+              ]
+            },
+            "description": "Actualiza una asignación existente. Solo se actualizan los campos proporcionados."
+          }
+        },
+        {
+          "name": "15. Delete Assignment (Soft Delete)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/subject-assignments/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subject-assignments",
+                "1"
+              ]
+            },
+            "description": "Desactiva una asignación (soft delete). El registro permanece en la BD pero isActive = false"
+          }
+        },
+        {
+          "name": "16. Delete Assignment (Permanent)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/subject-assignments/1/permanent",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subject-assignments",
+                "1",
+                "permanent"
+              ]
+            },
+            "description": "PRECAUCIÓN: Elimina permanentemente el registro de la base de datos"
           }
         }
       ]

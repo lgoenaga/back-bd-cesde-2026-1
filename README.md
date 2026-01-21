@@ -965,6 +965,7 @@ El módulo de **Subject Assignments** permite asignar profesores a materias espe
 - ✅ **Soft delete**: Desactivación sin pérdida de datos
 - ✅ **Paginación completa**: Todos los listados con versión paginada
 - ✅ **Filtros múltiples**: Por materia, profesor, período o combinaciones
+- ✅ **Incluye levelId y levelName**: Facilita filtrado por nivel desde frontend
 
 ### Endpoints Disponibles (17 total)
 
@@ -1776,7 +1777,4 @@ Proyecto académico - Enero 2026
 **Última actualización:** Enero 20, 2026  
 **Versión:** 2.4.0 - Jerarquía de Inscripciones Completa + Paginación + JWT  
 **Estado:** ✅ PRODUCTION READY - 100% Funcional - 269 Endpoints
-
-
-
 

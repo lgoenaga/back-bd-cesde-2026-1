@@ -25,6 +25,10 @@ public class SubjectAssignmentResponseDTO {
     private String subjectName;
     private String subjectCode;
 
+    // Level details (from Subject) - Added for frontend filtering
+    private Long levelId;
+    private String levelName;
+
     // Professor details
     private Long professorId;
     private String professorFirstName;
@@ -73,6 +77,12 @@ public class SubjectAssignmentResponseDTO {
             builder.subjectId(assignment.getSubject().getId())
                     .subjectName(assignment.getSubject().getName())
                     .subjectCode(assignment.getSubject().getCode());
+
+            // Level details (from Subject) - Added for frontend filtering
+            if (assignment.getSubject().getLevel() != null) {
+                builder.levelId(assignment.getSubject().getLevel().getId())
+                        .levelName(assignment.getSubject().getLevel().getName());
+            }
         }
 
         // Professor details

@@ -1,18 +1,18 @@
 # Student Information System - REST API
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)]()
-[![Version](https://img.shields.io/badge/version-2.1.0-blue)]()
+[![Version](https://img.shields.io/badge/version-2.4.0-blue)]()
 [![Java](https://img.shields.io/badge/Java-17-orange)]()
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.1-green)]()
-[![Endpoints](https://img.shields.io/badge/endpoints-187+-success)]()
+[![Endpoints](https://img.shields.io/badge/endpoints-269+-success)]()
 [![API](https://img.shields.io/badge/API-100%25%20Funcional-brightgreen)]()
 [![Pagination](https://img.shields.io/badge/Pagination-Implemented-blue)]()
 
-Sistema de Información Estudiantil completo desarrollado como REST API con Spring Boot, JPA y MySQL con **soporte completo de paginación**.
+Sistema de Información Estudiantil completo desarrollado como REST API con Spring Boot, JPA y MySQL con **soporte completo de paginación** y **jerarquía de inscripciones**.
 
 **✅ 100% Funcional desde Frontend - No requiere acceso directo a la base de datos**
 
-Gestiona: Estudiantes, Profesores, Cursos, Niveles, Materias, Períodos Académicos, Grupos, Inscripciones, **Asignaciones de Profesores**, **Calificaciones**, **Asistencia**, **Usuarios** y **Roles**.
+Gestiona: Estudiantes, Profesores, Cursos, Niveles, Materias, Períodos Académicos, Grupos, **Inscripciones Jerárquicas** (Curso → Nivel → Materia), **Asignaciones de Profesores**, **Calificaciones**, **Asistencia**, **Usuarios** y **Roles**.
 
 ---
 
@@ -471,7 +471,7 @@ src/main/java/com/cesde/studentinfo/
 │   ├── JwtAuthenticationFilter.java  # Filtro de autenticación JWT
 │   └── (otros archivos de config...)
 │
-├── controller/                    # REST Controllers (14 archivos)
+├── controller/                    # REST Controllers (16 archivos)
 │   ├── AuthController.java       # Autenticación (Login, Register, JWT)
 │   ├── StudentController.java
 │   ├── ProfessorController.java
@@ -481,13 +481,16 @@ src/main/java/com/cesde/studentinfo/
 │   ├── AcademicPeriodController.java
 │   ├── CourseGroupController.java
 │   ├── CourseEnrollmentController.java
+│   ├── LevelEnrollmentController.java
+│   ├── SubjectEnrollmentController.java
+│   ├── SubjectAssignmentController.java
 │   ├── GradeController.java
 │   ├── AttendanceController.java
 │   ├── UserController.java
 │   ├── RoleController.java
 │   └── HealthController.java
 │
-├── service/                       # Business Logic (14 archivos)
+├── service/                       # Business Logic (16 archivos)
 │   ├── AuthService.java          # Lógica de autenticación JWT
 │   ├── CustomUserDetailsService.java  # Carga usuarios desde BD
 │   ├── StudentService.java
@@ -498,12 +501,15 @@ src/main/java/com/cesde/studentinfo/
 │   ├── AcademicPeriodService.java
 │   ├── CourseGroupService.java
 │   ├── CourseEnrollmentService.java
+│   ├── LevelEnrollmentService.java
+│   ├── SubjectEnrollmentService.java
+│   ├── SubjectAssignmentService.java
 │   ├── GradeService.java
 │   ├── AttendanceService.java
 │   ├── UserService.java
 │   └── RoleService.java
 │
-├── repository/                    # Spring Data JPA Repositories (13 archivos)
+├── repository/                    # Spring Data JPA Repositories (16 archivos)
 │   ├── StudentRepository.java
 │   ├── ProfessorRepository.java
 │   ├── CourseRepository.java
@@ -512,13 +518,16 @@ src/main/java/com/cesde/studentinfo/
 │   ├── AcademicPeriodRepository.java
 │   ├── CourseGroupRepository.java
 │   ├── CourseEnrollmentRepository.java
+│   ├── LevelEnrollmentRepository.java
+│   ├── SubjectEnrollmentRepository.java
+│   ├── SubjectAssignmentRepository.java
 │   ├── GradeRepository.java
 │   ├── AttendanceRepository.java
 │   ├── UserRepository.java
 │   ├── RoleRepository.java
 │   └── UserRoleRepository.java
 │
-├── model/                         # JPA Entities (15+ entidades)
+├── model/                         # JPA Entities (18+ entidades)
 │   ├── Person.java
 │   ├── Student.java
 │   ├── Professor.java
@@ -528,6 +537,9 @@ src/main/java/com/cesde/studentinfo/
 │   ├── AcademicPeriod.java
 │   ├── CourseGroup.java
 │   ├── CourseEnrollment.java
+│   ├── LevelEnrollment.java
+│   ├── SubjectEnrollment.java
+│   ├── SubjectAssignment.java
 │   ├── Grade.java
 │   ├── Attendance.java
 │   ├── User.java
@@ -535,13 +547,19 @@ src/main/java/com/cesde/studentinfo/
 │   ├── UserRole.java
 │   └── ...
 │
-├── dto/                           # Data Transfer Objects (30+ archivos)
+├── dto/                           # Data Transfer Objects (39 archivos)
 │   ├── ApiResponse.java
+│   ├── PagedResponse.java
 │   ├── StudentDTO.java + StudentResponseDTO.java
 │   ├── ProfessorDTO.java + ProfessorResponseDTO.java
 │   ├── CourseDTO.java + CourseResponseDTO.java
 │   ├── LevelDTO.java + LevelResponseDTO.java
 │   ├── SubjectDTO.java + SubjectResponseDTO.java
+│   ├── AcademicPeriodDTO.java + AcademicPeriodResponseDTO.java
+│   ├── CourseGroupDTO.java + CourseGroupResponseDTO.java
+│   ├── CourseEnrollmentDTO.java + CourseEnrollmentResponseDTO.java
+│   ├── LevelEnrollmentDTO.java + LevelEnrollmentResponseDTO.java
+│   ├── SubjectEnrollmentDTO.java + SubjectEnrollmentResponseDTO.java
 │   ├── AcademicPeriodDTO.java + AcademicPeriodResponseDTO.java
 │   ├── CourseGroupDTO.java + CourseGroupResponseDTO.java
 │   ├── CourseEnrollmentDTO.java + CourseEnrollmentResponseDTO.java
@@ -657,6 +675,34 @@ Similar a Students:
 - PUT `/enrollments/{id}` - Actualizar inscripción
 - PATCH `/enrollments/{id}/status` - Cambiar estado
 - DELETE `/enrollments/{id}` - Cancelar inscripción
+
+### 📊 Level Enrollments (12 endpoints)
+- GET `/level-enrollments` - Listar inscripciones a niveles
+- GET `/level-enrollments/paged` - ✅ Paginado (recomendado)
+- GET `/level-enrollments/{id}` - Por ID
+- GET `/level-enrollments/course-enrollment/{id}` - Por inscripción de curso
+- GET `/level-enrollments/level/{id}` - Por nivel
+- GET `/level-enrollments/period/{id}` - Por período académico
+- GET `/level-enrollments/group/{id}` - Por grupo
+- GET `/level-enrollments/status/{status}` - Por estado
+- POST `/level-enrollments` - Crear inscripción a nivel
+- PUT `/level-enrollments/{id}` - Actualizar inscripción
+- PATCH `/level-enrollments/{id}/status` - Cambiar estado
+- DELETE `/level-enrollments/{id}` - Eliminar inscripción
+- GET `/level-enrollments/count` - Contar inscripciones
+
+### 📚 Subject Enrollments (10 endpoints)
+- GET `/subject-enrollments` - Listar inscripciones a materias
+- GET `/subject-enrollments/paged` - ✅ Paginado (recomendado)
+- GET `/subject-enrollments/{id}` - Por ID
+- GET `/subject-enrollments/level-enrollment/{id}` - Por inscripción de nivel
+- GET `/subject-enrollments/subject-assignment/{id}` - Por asignación de materia
+- GET `/subject-enrollments/status/{status}` - Por estado
+- POST `/subject-enrollments` - Crear inscripción a materia
+- PUT `/subject-enrollments/{id}` - Actualizar inscripción
+- PATCH `/subject-enrollments/{id}/status` - Cambiar estado
+- DELETE `/subject-enrollments/{id}` - Eliminar inscripción
+- GET `/subject-enrollments/count` - Contar inscripciones
 
 ### 🎯 Grades (10 endpoints) - **CALIFICACIONES**
 - GET `/grades` - Listar calificaciones
@@ -867,6 +913,39 @@ curl -X POST http://localhost:8080/api/attendance \
     "assignmentDate": "2026-01-13",
     "status": "PRESENTE",
     "notes": "Asistió puntualmente"
+  }'
+```
+
+### Crear Inscripción a Nivel
+
+```bash
+# Guardar el token en una variable
+TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+curl -X POST http://localhost:8080/api/level-enrollments \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "courseEnrollmentId": 1,
+    "levelId": 1,
+    "academicPeriodId": 1,
+    "groupId": 1,
+    "enrollmentDate": "2026-01-20",
+    "status": "EN_CURSO"
+  }'
+```
+
+### Crear Inscripción a Materia
+
+```bash
+curl -X POST http://localhost:8080/api/subject-enrollments \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "levelEnrollmentId": 1,
+    "subjectAssignmentId": 1,
+    "enrollmentDate": "2026-01-20",
+    "status": "EN_CURSO"
   }'
 ```
 
@@ -1583,16 +1662,19 @@ Ver `BASEDATOS.sql` para el esquema completo.
 | CRUD Materias | ✅ Completo (9 endpoints) |
 | CRUD Períodos Académicos | ✅ Completo (9 endpoints) |
 | CRUD Grupos | ✅ Completo (9 endpoints) |
-| CRUD Inscripciones | ✅ Completo (10 endpoints) |
+| CRUD Inscripciones Cursos | ✅ Completo (10 endpoints) |
+| CRUD Inscripciones Niveles | ✅ Completo (12 endpoints) |
+| CRUD Inscripciones Materias | ✅ Completo (10 endpoints) |
+| CRUD Asignaciones Profesores | ✅ Completo (17 endpoints) |
 | CRUD Calificaciones | ✅ Completo (10 endpoints) |
 | CRUD Asistencia | ✅ Completo (11 endpoints) |
 | CRUD Usuarios | ✅ Completo (13 endpoints) |
 | CRUD Roles | ✅ Completo (10 endpoints) |
 | CRUD User-Roles | ✅ Completo (8 endpoints) |
-| Repositories | ✅ 13 implementados |
-| Services | ✅ 13 implementados |
-| Controllers | ✅ 14 implementados |
-| DTOs | ✅ 35 implementados |
+| Repositories | ✅ 16 implementados |
+| Services | ✅ 16 implementados |
+| Controllers | ✅ 16 implementados |
+| DTOs | ✅ 39 implementados |
 | Exception Handling | ✅ Global |
 | Validaciones | ✅ Bean Validation |
 | CORS | ✅ Configurado |
@@ -1607,12 +1689,16 @@ Ver `BASEDATOS.sql` para el esquema completo.
 
 ### ✅ Completado
 - [x] **Paginación en listados largos** ✨ (v2.1.0 - Enero 2026)
-  - 33 endpoints paginados implementados
+  - 39 endpoints paginados implementados
   - Soporte completo para todas las entidades principales
   - Ordenamiento configurable y metadatos de paginación
 - [x] **Spring Security con JWT** (v2.0.0 - Enero 2026)
 - [x] **CORS configurado** (v2.0.0)
 - [x] **Gestión de Usuarios y Roles** (v2.0.0)
+- [x] **Jerarquía de Inscripciones Completa** (v2.4.0 - Enero 2026)
+  - CourseEnrollment → LevelEnrollment → SubjectEnrollment
+  - Validaciones de jerarquía y estados activos
+  - ~269 endpoints totales
 
 ### Corto Plazo
 - [ ] Swagger/OpenAPI para documentación interactiva
@@ -1687,9 +1773,10 @@ Proyecto académico - Enero 2026
 
 ---
 
-**Última actualización:** Enero 15, 2026  
-**Versión:** 2.1.0 - Paginación Completa + JWT + CORS  
-**Estado:** ✅ PRODUCTION READY - 100% Funcional con Paginación
+**Última actualización:** Enero 20, 2026  
+**Versión:** 2.4.0 - Jerarquía de Inscripciones Completa + Paginación + JWT  
+**Estado:** ✅ PRODUCTION READY - 100% Funcional - 269 Endpoints
+
 
 
 

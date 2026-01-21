@@ -5,6 +5,10 @@ import com.cesde.studentinfo.dto.AttendanceDTO;
 import com.cesde.studentinfo.dto.AttendanceResponseDTO;
 import com.cesde.studentinfo.exception.ResourceNotFoundException;
 import com.cesde.studentinfo.model.Attendance;
+import com.cesde.studentinfo.model.ClassSession;
+import com.cesde.studentinfo.model.SubjectEnrollment;
+import com.cesde.studentinfo.repository.ClassSessionRepository;
+import com.cesde.studentinfo.repository.SubjectEnrollmentRepository;
 import com.cesde.studentinfo.service.AttendanceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +32,8 @@ import java.util.stream.Collectors;
 public class AttendanceController {
 
     private final AttendanceService attendanceService;
+    private final SubjectEnrollmentRepository subjectEnrollmentRepository;
+    private final ClassSessionRepository classSessionRepository;
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<AttendanceResponseDTO>>> getAllAttendance() {
@@ -91,11 +97,19 @@ public class AttendanceController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<AttendanceResponseDTO>> createAttendance(@Valid @RequestBody AttendanceDTO dto) {
-        log.info("POST /attendance - Creating new attendance record");
+        log.info("POST /attendance - Creating new attendance record for subject enrollment: {}", dto.getSubjectEnrollmentId());
 
-        // Nota: Aquí necesitarías buscar las entidades relacionadas
-        // Por simplicidad del ejemplo, el builder necesita las entidades completas
+        // Buscar las entidades relacionadas usando los IDs del DTO
+        SubjectEnrollment subjectEnrollment = subjectEnrollmentRepository.findById(dto.getSubjectEnrollmentId())
+                .orElseThrow(() -> new ResourceNotFoundException("SubjectEnrollment", dto.getSubjectEnrollmentId()));
+
+        ClassSession classSession = classSessionRepository.findById(dto.getClassSessionId())
+                .orElseThrow(() -> new ResourceNotFoundException("ClassSession", dto.getClassSessionId()));
+
+        // Construir la entidad Attendance con las relaciones correctas
         Attendance attendance = Attendance.builder()
+                .subjectEnrollment(subjectEnrollment)
+                .classSession(classSession)
                 .assignmentDate(dto.getAssignmentDate())
                 .status(dto.getStatus())
                 .isExcused(dto.getIsExcused() != null ? dto.getIsExcused() : false)

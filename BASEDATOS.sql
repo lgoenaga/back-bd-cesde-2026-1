@@ -5,7 +5,17 @@
 -- User: cesde_user
 -- Password: [Configurar mediante variables de entorno - Ver DATABASE-SETUP.md]
 -- Generated: 2026-01-08
+-- Last Updated: 2026-01-20 (v2.5.0)
 -- MySQL Native Syntax
+-- 
+-- CHANGELOG v2.5.0 (Enero 20, 2026):
+-- - Tabla subject_enrollments actualizada:
+--   * subject_id: Ahora OBLIGATORIO (referencia directa a subjects)
+--   * subject_assignment_id: Ahora OPCIONAL (para trazabilidad de profesor)
+--   * Nuevo constraint: fk_subject_enrollment_subject
+--   * Nuevo indice: idx_subject_enrollment_subject
+--   * UNIQUE KEY actualizado: (level_enrollment_id, subject_id)
+--   * Permite inscripcion sin profesor asignado
 -- ============================================================================
 
 -- Drop database if exists and create fresh
@@ -325,21 +335,25 @@ CREATE TABLE `subject_assignments` (
 ) ENGINE=InnoDB COMMENT='Professor assignments to subjects per period';
 
 -- ----------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------
 -- Table: subject_enrollments (Inscripciones a Materias)
 -- Description: Stores student enrollments to specific subjects
+-- ACTUALIZADO v2.5.0: subject_id obligatorio, subject_assignment_id opcional
 -- ----------------------------------------------------------------------------
 CREATE TABLE `subject_enrollments` (
     `id` BIGINT AUTO_INCREMENT,
     `level_enrollment_id` BIGINT NOT NULL,
-    `subject_assignment_id` BIGINT NOT NULL,
+    `subject_id` BIGINT NOT NULL COMMENT 'Direct reference to subject (mandatory)',
+    `subject_assignment_id` BIGINT NULL COMMENT 'Reference to professor assignment (optional - for traceability)',
     `enrollment_date` DATE NOT NULL,
     `status` ENUM('EN_CURSO', 'APROBADO', 'REPROBADO', 'RETIRADO') NOT NULL DEFAULT 'EN_CURSO',
     `final_grade` DECIMAL(4,2) NULL COMMENT 'Final grade (Definitiva) for the subject',
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
-    UNIQUE KEY `uk_level_enrollment_subject` (`level_enrollment_id`, `subject_assignment_id`),
+    UNIQUE KEY `uk_level_enrollment_subject` (`level_enrollment_id`, `subject_id`),
     INDEX `idx_subject_enrollment_level` (`level_enrollment_id`),
+    INDEX `idx_subject_enrollment_subject` (`subject_id`),
     INDEX `idx_subject_enrollment_assignment` (`subject_assignment_id`),
     INDEX `idx_subject_enrollment_status` (`status`),
     CONSTRAINT `fk_subject_enrollment_level`
@@ -347,10 +361,15 @@ CREATE TABLE `subject_enrollments` (
         REFERENCES `level_enrollments` (`id`)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
+    CONSTRAINT `fk_subject_enrollment_subject`
+        FOREIGN KEY (`subject_id`)
+        REFERENCES `subjects` (`id`)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE,
     CONSTRAINT `fk_subject_enrollment_assignment`
         FOREIGN KEY (`subject_assignment_id`)
         REFERENCES `subject_assignments` (`id`)
-        ON DELETE RESTRICT
+        ON DELETE SET NULL
         ON UPDATE CASCADE,
     CONSTRAINT `chk_subject_final_grade`
         CHECK (`final_grade` BETWEEN 0 AND 5)

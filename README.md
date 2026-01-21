@@ -141,24 +141,6 @@ subject_enrollments (
 - ✅ Mayor flexibilidad operativa
 
 **Documentación Completa:**
-- Ver: `MIGRATION-subject-enrollments.sql` (script de migración)
-- Ver: `FRONTEND-CLARIFICATION.md` (guía para frontend)
-- Ver: `IMPLEMENTATION-SUMMARY-v2.5.0.md` (resumen técnico)
-
----
-
-## 📝 Cambios Anteriores
-
-### v2.4.1 (Enero 20, 2026)
-- SubjectAssignmentResponseDTO incluye `levelId` y `levelName`
-- Facilita filtrado de materias por nivel desde frontend
-
-### v2.4.0 (Enero 2026)
-- Agregadas secciones: Level Enrollments y Subject Enrollments
-- Validaciones de jerarquía de inscripciones
-- Validación cruzada: Subject debe pertenecer al Level correcto
-
----
 
 ## 📋 Requisitos Previos
 

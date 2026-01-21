@@ -5,6 +5,12 @@ import com.cesde.studentinfo.dto.GradeDTO;
 import com.cesde.studentinfo.dto.GradeResponseDTO;
 import com.cesde.studentinfo.exception.ResourceNotFoundException;
 import com.cesde.studentinfo.model.Grade;
+import com.cesde.studentinfo.model.GradeComponent;
+import com.cesde.studentinfo.model.GradePeriod;
+import com.cesde.studentinfo.model.SubjectEnrollment;
+import com.cesde.studentinfo.repository.GradeComponentRepository;
+import com.cesde.studentinfo.repository.GradePeriodRepository;
+import com.cesde.studentinfo.repository.SubjectEnrollmentRepository;
 import com.cesde.studentinfo.service.GradeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +32,9 @@ import java.util.stream.Collectors;
 public class GradeController {
 
     private final GradeService gradeService;
+    private final SubjectEnrollmentRepository subjectEnrollmentRepository;
+    private final GradePeriodRepository gradePeriodRepository;
+    private final GradeComponentRepository gradeComponentRepository;
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<GradeResponseDTO>>> getAllGrades() {
@@ -87,13 +96,23 @@ public class GradeController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<GradeResponseDTO>> createGrade(@Valid @RequestBody GradeDTO dto) {
-        log.info("POST /grades - Creating new grade");
+        log.info("POST /grades - Creating new grade for subject enrollment: {}", dto.getSubjectEnrollmentId());
 
-        // Nota: Aquí necesitarías buscar las entidades relacionadas
-        // Por simplicidad, asumo que el DTO tiene los IDs necesarios
-        // y el frontend los proporciona correctamente
+        // Buscar las entidades relacionadas usando los IDs del DTO
+        SubjectEnrollment subjectEnrollment = subjectEnrollmentRepository.findById(dto.getSubjectEnrollmentId())
+                .orElseThrow(() -> new ResourceNotFoundException("SubjectEnrollment", dto.getSubjectEnrollmentId()));
 
+        GradePeriod gradePeriod = gradePeriodRepository.findById(dto.getGradePeriodId())
+                .orElseThrow(() -> new ResourceNotFoundException("GradePeriod", dto.getGradePeriodId()));
+
+        GradeComponent gradeComponent = gradeComponentRepository.findById(dto.getGradeComponentId())
+                .orElseThrow(() -> new ResourceNotFoundException("GradeComponent", dto.getGradeComponentId()));
+
+        // Construir la entidad Grade con las relaciones correctas
         Grade grade = Grade.builder()
+                .subjectEnrollment(subjectEnrollment)
+                .gradePeriod(gradePeriod)
+                .gradeComponent(gradeComponent)
                 .gradeValue(dto.getGradeValue())
                 .assignmentDate(dto.getAssignmentDate())
                 .comments(dto.getComments())

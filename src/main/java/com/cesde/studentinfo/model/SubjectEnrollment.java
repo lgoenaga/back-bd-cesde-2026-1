@@ -28,7 +28,11 @@ public class SubjectEnrollment {
     private LevelEnrollment levelEnrollment;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "subject_assignment_id", nullable = false)
+    @JoinColumn(name = "subject_id", nullable = false)
+    private Subject subject;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subject_assignment_id", nullable = true)
     private SubjectAssignment subjectAssignment;
 
     @NotNull

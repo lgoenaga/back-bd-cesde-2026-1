@@ -6,10 +6,12 @@ import com.cesde.studentinfo.dto.SubjectEnrollmentDTO;
 import com.cesde.studentinfo.dto.SubjectEnrollmentResponseDTO;
 import com.cesde.studentinfo.exception.ResourceNotFoundException;
 import com.cesde.studentinfo.model.LevelEnrollment;
+import com.cesde.studentinfo.model.Subject;
 import com.cesde.studentinfo.model.SubjectAssignment;
 import com.cesde.studentinfo.model.SubjectEnrollment;
 import com.cesde.studentinfo.repository.LevelEnrollmentRepository;
 import com.cesde.studentinfo.repository.SubjectAssignmentRepository;
+import com.cesde.studentinfo.repository.SubjectRepository;
 import com.cesde.studentinfo.service.SubjectEnrollmentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +39,7 @@ public class SubjectEnrollmentController {
     private final SubjectEnrollmentService subjectEnrollmentService;
     private final LevelEnrollmentRepository levelEnrollmentRepository;
     private final SubjectAssignmentRepository subjectAssignmentRepository;
+    private final SubjectRepository subjectRepository;
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<SubjectEnrollmentResponseDTO>>> getAllSubjectEnrollments() {
@@ -129,16 +132,25 @@ public class SubjectEnrollmentController {
     @PostMapping
     public ResponseEntity<ApiResponse<SubjectEnrollmentResponseDTO>> createSubjectEnrollment(
             @Valid @RequestBody SubjectEnrollmentDTO dto) {
-        log.info("POST /subject-enrollments - Creating new subject enrollment");
+        log.info("POST /subject-enrollments - Creating new subject enrollment (Subject ID: {}, Assignment ID: {})",
+                dto.getSubjectId(), dto.getSubjectAssignmentId());
 
         LevelEnrollment levelEnrollment = levelEnrollmentRepository.findById(dto.getLevelEnrollmentId())
                 .orElseThrow(() -> new ResourceNotFoundException("LevelEnrollment", dto.getLevelEnrollmentId()));
 
-        SubjectAssignment subjectAssignment = subjectAssignmentRepository.findById(dto.getSubjectAssignmentId())
-                .orElseThrow(() -> new ResourceNotFoundException("SubjectAssignment", dto.getSubjectAssignmentId()));
+        Subject subject = subjectRepository.findById(dto.getSubjectId())
+                .orElseThrow(() -> new ResourceNotFoundException("Subject", dto.getSubjectId()));
+
+        // SubjectAssignment is OPTIONAL
+        SubjectAssignment subjectAssignment = null;
+        if (dto.getSubjectAssignmentId() != null) {
+            subjectAssignment = subjectAssignmentRepository.findById(dto.getSubjectAssignmentId())
+                    .orElseThrow(() -> new ResourceNotFoundException("SubjectAssignment", dto.getSubjectAssignmentId()));
+        }
 
         SubjectEnrollment enrollment = SubjectEnrollment.builder()
                 .levelEnrollment(levelEnrollment)
+                .subject(subject)
                 .subjectAssignment(subjectAssignment)
                 .enrollmentDate(dto.getEnrollmentDate())
                 .status(dto.getStatus())
@@ -146,9 +158,19 @@ public class SubjectEnrollmentController {
 
         SubjectEnrollment saved = subjectEnrollmentService.createSubjectEnrollment(enrollment);
 
+        // Different message depending on whether professor is assigned
+        String message;
+        if (saved.getSubjectAssignment() != null) {
+            message = "Subject enrollment created successfully with professor " +
+                     saved.getSubjectAssignment().getProfessor().getFirstName() + " " +
+                     saved.getSubjectAssignment().getProfessor().getLastName();
+        } else {
+            message = "Subject enrollment created successfully. " +
+                     "⚠️ Note: Professor not assigned yet. This can be updated later.";
+        }
+
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success(SubjectEnrollmentResponseDTO.fromEntity(saved),
-                        "Subject enrollment created successfully"));
+                .body(ApiResponse.success(SubjectEnrollmentResponseDTO.fromEntity(saved), message));
     }
 
     @PutMapping("/{id}")
@@ -174,6 +196,35 @@ public class SubjectEnrollmentController {
         SubjectEnrollment updated = subjectEnrollmentService.updateSubjectEnrollmentStatus(id, status);
         return ResponseEntity.ok(ApiResponse.success(SubjectEnrollmentResponseDTO.fromEntity(updated),
                 "Subject enrollment status updated successfully"));
+    }
+
+    @PatchMapping("/{id}/assign-professor")
+    public ResponseEntity<ApiResponse<SubjectEnrollmentResponseDTO>> assignProfessor(
+            @PathVariable Long id,
+            @RequestParam Long subjectAssignmentId) {
+        log.info("PATCH /subject-enrollments/{}/assign-professor - Assigning professor (assignment ID: {})",
+                id, subjectAssignmentId);
+
+        SubjectEnrollment enrollment = subjectEnrollmentService.getSubjectEnrollmentById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("SubjectEnrollment", id));
+
+        SubjectAssignment assignment = subjectAssignmentRepository.findById(subjectAssignmentId)
+                .orElseThrow(() -> new ResourceNotFoundException("SubjectAssignment", subjectAssignmentId));
+
+        // Validate that assignment matches the enrolled subject
+        if (!assignment.getSubject().getId().equals(enrollment.getSubject().getId())) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error("SubjectAssignment does not match the enrolled subject. " +
+                            "Enrollment is for: " + enrollment.getSubject().getName() +
+                            ", but assignment is for: " + assignment.getSubject().getName()));
+        }
+
+        enrollment.setSubjectAssignment(assignment);
+        SubjectEnrollment updated = subjectEnrollmentService.updateSubjectEnrollment(id, enrollment);
+
+        return ResponseEntity.ok(ApiResponse.success(
+                SubjectEnrollmentResponseDTO.fromEntity(updated),
+                "Professor assigned successfully to subject enrollment"));
     }
 
     @DeleteMapping("/{id}")

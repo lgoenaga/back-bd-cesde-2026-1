@@ -10,6 +10,7 @@ import com.cesde.studentinfo.model.Level;
 import com.cesde.studentinfo.repository.LevelEnrollmentRepository;
 import com.cesde.studentinfo.repository.SubjectAssignmentRepository;
 import com.cesde.studentinfo.repository.SubjectEnrollmentRepository;
+import com.cesde.studentinfo.repository.SubjectRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -33,6 +34,7 @@ public class SubjectEnrollmentService {
     private final SubjectEnrollmentRepository subjectEnrollmentRepository;
     private final LevelEnrollmentRepository levelEnrollmentRepository;
     private final SubjectAssignmentRepository subjectAssignmentRepository;
+    private final SubjectRepository subjectRepository;
 
     @Transactional(readOnly = true)
     public List<SubjectEnrollment> getAllSubjectEnrollments() {
@@ -77,10 +79,10 @@ public class SubjectEnrollmentService {
     }
 
     public SubjectEnrollment createSubjectEnrollment(SubjectEnrollment enrollment) {
-        log.info("Creating SubjectEnrollment for LevelEnrollment ID: {} in SubjectAssignment ID: {}",
-                enrollment.getLevelEnrollment().getId(), enrollment.getSubjectAssignment().getId());
+        log.info("Creating SubjectEnrollment for LevelEnrollment ID: {} in Subject ID: {}",
+                enrollment.getLevelEnrollment().getId(), enrollment.getSubject().getId());
 
-        // Validar LevelEnrollment - La transacción permite cargar las relaciones lazy
+        // Validar LevelEnrollment
         LevelEnrollment levelEnrollment = levelEnrollmentRepository
                 .findById(enrollment.getLevelEnrollment().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("LevelEnrollment",
@@ -91,20 +93,37 @@ public class SubjectEnrollmentService {
                 "Level enrollment is not active. Only students with active level enrollments can enroll in subjects");
         }
 
-        // Validar SubjectAssignment
-        SubjectAssignment subjectAssignment = subjectAssignmentRepository
-                .findById(enrollment.getSubjectAssignment().getId())
-                .orElseThrow(() -> new ResourceNotFoundException("SubjectAssignment",
-                        enrollment.getSubjectAssignment().getId()));
+        // Validar Subject (OBLIGATORIO)
+        Subject subject = subjectRepository
+                .findById(enrollment.getSubject().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Subject",
+                        enrollment.getSubject().getId()));
 
-        // Validación cruzada de jerarquía: Subject debe pertenecer al Level correcto
-        Subject subject = subjectAssignment.getSubject();
+        // Validación cruzada: Subject debe pertenecer al Level correcto
         Level levelFromEnrollment = levelEnrollment.getLevel();
 
         if (!subject.getLevel().getId().equals(levelFromEnrollment.getId())) {
             throw new BusinessException(
-                "Subject does not belong to the level of this level enrollment. Subject requires level: " +
-                subject.getLevel().getName());
+                "Subject does not belong to the level of this level enrollment. " +
+                "Expected level: " + levelFromEnrollment.getName() +
+                ", but subject belongs to: " + subject.getLevel().getName());
+        }
+
+        // Validar SubjectAssignment si se proporciona (OPCIONAL)
+        SubjectAssignment subjectAssignment = null;
+        if (enrollment.getSubjectAssignment() != null && enrollment.getSubjectAssignment().getId() != null) {
+            subjectAssignment = subjectAssignmentRepository
+                    .findById(enrollment.getSubjectAssignment().getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("SubjectAssignment",
+                            enrollment.getSubjectAssignment().getId()));
+
+            // Validar que el assignment corresponde a la misma materia
+            if (!subjectAssignment.getSubject().getId().equals(subject.getId())) {
+                throw new BusinessException(
+                    "SubjectAssignment does not match the subject. " +
+                    "Assignment is for: " + subjectAssignment.getSubject().getName() +
+                    ", but trying to enroll in: " + subject.getName());
+            }
         }
 
         // Establecer fecha de inscripción si no se proporciona
@@ -117,9 +136,26 @@ public class SubjectEnrollmentService {
             enrollment.setStatus(SubjectEnrollment.SubjectStatus.EN_CURSO);
         }
 
+        // Establecer las relaciones validadas
+        enrollment.setSubject(subject);
+        enrollment.setSubjectAssignment(subjectAssignment);
+
         SubjectEnrollment saved = subjectEnrollmentRepository.save(enrollment);
-        log.info("Subject enrollment created successfully with ID: {} (Subject: {})",
-                saved.getId(), subject.getName());
+
+        // Log diferente si no hay profesor asignado
+        if (saved.getSubjectAssignment() == null) {
+            log.warn("SubjectEnrollment created WITHOUT professor assignment. " +
+                    "EnrollmentId: {}, Subject: {}, Student: {}",
+                    saved.getId(),
+                    saved.getSubject().getName(),
+                    saved.getLevelEnrollment().getCourseEnrollment().getStudent().getFirstName());
+        } else {
+            log.info("Subject enrollment created successfully with ID: {} (Subject: {}, Professor: {})",
+                    saved.getId(),
+                    subject.getName(),
+                    saved.getSubjectAssignment().getProfessor().getFirstName());
+        }
+
         return saved;
     }
 

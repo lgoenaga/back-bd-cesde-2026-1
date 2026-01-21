@@ -21,8 +21,10 @@ public class SubjectEnrollmentDTO {
     @NotNull(message = "Level Enrollment ID is required")
     private Long levelEnrollmentId;
 
-    @NotNull(message = "Subject Assignment ID is required")
-    private Long subjectAssignmentId;
+    @NotNull(message = "Subject ID is required")
+    private Long subjectId;
+
+    private Long subjectAssignmentId; // Optional - for professor assignment/traceability
 
     private LocalDate enrollmentDate;
 

@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "Student Information System API v2.4.1",
-    "description": "REST API for Student Information System - CESDE 2026\n\nCaracterísticas:\n- Autenticación JWT completa (login, register, refresh, validate)\n- CORS configurado\n- Paginación completa (41 endpoints paginados)\n- 269+ endpoints totales\n- Gestión completa de Usuarios y Roles\n- CRUD completo para todas las entidades\n- Jerarquía de inscripciones: CourseEnrollment → LevelEnrollment → SubjectEnrollment\n\nNuevo en v2.4.1 (Enero 20, 2026):\n- SubjectAssignmentResponseDTO ahora incluye levelId y levelName\n- Facilita filtrado de materias por nivel desde el frontend\n- Queries actualizadas con LEFT JOIN FETCH subject.level\n\nNuevo en v2.4.0:\n- Agregadas secciones: Level Enrollments y Subject Enrollments\n- 12 nuevos endpoints para Level Enrollments (con paginación)\n- 10 nuevos endpoints para Subject Enrollments (con paginación)\n- Validaciones de jerarquía de inscripciones\n- Validación cruzada: Subject debe pertenecer al Level correcto\n\nNuevo en v2.3.0:\n- Agregada sección: Subject Assignments (Asignación de Profesores a Materias)\n- 17 nuevos endpoints para gestión completa de asignaciones\n- 6 endpoints con paginación incluida\n\nNuevo en v2.2.0:\n- Agregadas secciones: Course Enrollments, Academic Periods, Levels, Subjects, Course Groups\n- Ruta de Course Enrollments corregida: /course-enrollments (era /enrollments)\n- Todos los endpoints con JOIN FETCH para evitar LazyInitializationException\n- Endpoints optimizados con @EntityGraph\n\nSecciones disponibles:\n- Health (2 endpoints)\n- Authentication (4 endpoints)\n- Students (10+ endpoints)\n- Professors (10+ endpoints)\n- Courses (10+ endpoints)\n- Levels (8+ endpoints)\n- Subjects (10+ endpoints)\n- Academic Periods (8+ endpoints)\n- Course Groups (9+ endpoints)\n- Course Enrollments (10+ endpoints)\n- Level Enrollments (12 endpoints)\n- Subject Enrollments (10 endpoints)\n- Subject Assignments (17 endpoints) - ✨ Ahora incluye levelId/levelName\n- Grades (10+ endpoints)\n- Attendance (10+ endpoints)\n- Users (15+ endpoints)\n- Roles (10+ endpoints)\n- User Roles (10+ endpoints)\n\nNota: Todos los endpoints marcados con 'Paginated' soportan los siguientes parámetros:\n- page: Número de página (default: 0)\n- size: Registros por página (default: 20)\n- sort: Campo y dirección (ej: lastName,asc)",
+    "name": "Student Information System API v2.5.0",
+    "description": "REST API for Student Information System - CESDE 2026\n\nCaracterísticas:\n- Autenticación JWT completa (login, register, refresh, validate)\n- CORS configurado\n- Paginación completa (41 endpoints paginados)\n- 270+ endpoints totales\n- Gestión completa de Usuarios y Roles\n- CRUD completo para todas las entidades\n- Jerarquía de inscripciones FLEXIBLE: CourseEnrollment → LevelEnrollment → SubjectEnrollment\n\nNuevo en v2.5.0 (Enero 20, 2026) - ⭐ CORRECCIÓN CRÍTICA:\n- Subject Enrollments ahora usa subject_id (obligatorio) + subject_assignment_id (opcional)\n- Permite inscripción SIN profesor asignado\n- Nuevo endpoint: PATCH /subject-enrollments/{id}/assign-professor\n- Response incluye subjectId, subjectCode\n- Campos de profesor opcionales (professorName, schedule, classroom pueden ser null)\n- Migración de BD disponible: MIGRATION-subject-enrollments.sql\n\nNuevo en v2.4.1 (Enero 20, 2026):\n- SubjectAssignmentResponseDTO ahora incluye levelId y levelName\n- Facilita filtrado de materias por nivel desde el frontend\n- Queries actualizadas con LEFT JOIN FETCH subject.level\n\nNuevo en v2.4.0:\n- Agregadas secciones: Level Enrollments y Subject Enrollments\n- 12 nuevos endpoints para Level Enrollments (con paginación)\n- 11 endpoints para Subject Enrollments (con paginación)\n- Validaciones de jerarquía de inscripciones\n- Validación cruzada: Subject debe pertenecer al Level correcto\n\nNuevo en v2.3.0:\n- Agregada sección: Subject Assignments (Asignación de Profesores a Materias)\n- 17 nuevos endpoints para gestión completa de asignaciones\n- 6 endpoints con paginación incluida\n\nNuevo en v2.2.0:\n- Agregadas secciones: Course Enrollments, Academic Periods, Levels, Subjects, Course Groups\n- Ruta de Course Enrollments corregida: /course-enrollments (era /enrollments)\n- Todos los endpoints con JOIN FETCH para evitar LazyInitializationException\n- Endpoints optimizados con @EntityGraph\n\nSecciones disponibles:\n- Health (2 endpoints)\n- Authentication (4 endpoints)\n- Students (10+ endpoints)\n- Professors (10+ endpoints)\n- Courses (10+ endpoints)\n- Levels (8+ endpoints)\n- Subjects (10+ endpoints)\n- Academic Periods (8+ endpoints)\n- Course Groups (9+ endpoints)\n- Course Enrollments (10+ endpoints)\n- Level Enrollments (12 endpoints)\n- Subject Enrollments (11 endpoints) - ⭐ v2.5.0 Actualizado\n- Subject Assignments (17 endpoints)\n- Grades (10+ endpoints)\n- Attendance (10+ endpoints)\n- Users (15+ endpoints)\n- Roles (10+ endpoints)\n- User Roles (10+ endpoints)\n\nNota: Todos los endpoints marcados con 'Paginated' soportan los siguientes parámetros:\n- page: Número de página (default: 0)\n- size: Registros por página (default: 20)\n- sort: Campo y dirección (ej: lastName,asc)",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -2704,7 +2704,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"levelEnrollmentId\": 1,\n  \"subjectAssignmentId\": 1,\n  \"enrollmentDate\": \"2026-01-20\",\n  \"status\": \"EN_CURSO\"\n}"
+              "raw": "{\n  \"levelEnrollmentId\": 1,\n  \"subjectId\": 1,\n  \"subjectAssignmentId\": 1,\n  \"enrollmentDate\": \"2026-01-20\",\n  \"status\": \"EN_CURSO\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/subject-enrollments",
@@ -2714,7 +2714,38 @@
               "path": [
                 "subject-enrollments"
               ]
-            }
+            },
+            "description": "⭐ Actualizado en v2.5.0: Ahora requiere subjectId (obligatorio) y subjectAssignmentId es opcional.\n\nEjemplo con profesor (este request).\n\nEjemplo sin profesor: Ver 'Create Subject Enrollment Without Professor'"
+          }
+        },
+        {
+          "name": "Create Subject Enrollment Without Professor (v2.5.0)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"levelEnrollmentId\": 1,\n  \"subjectId\": 1,\n  \"subjectAssignmentId\": null,\n  \"enrollmentDate\": \"2026-01-20\",\n  \"status\": \"EN_CURSO\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/subject-enrollments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subject-enrollments"
+              ]
+            },
+            "description": "⭐ Nuevo en v2.5.0: Inscripción SIN profesor asignado.\n\nÚtil cuando:\n- Profesores no han sido asignados al inicio del período\n- Inscripción rápida del estudiante\n- Profesor se asignará después con PATCH /assign-professor"
           }
         },
         {
@@ -2774,6 +2805,37 @@
                 }
               ]
             }
+          }
+        },
+        {
+          "name": "Assign Professor to Enrollment (v2.5.0)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/subject-enrollments/1/assign-professor?subjectAssignmentId=5",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subject-enrollments",
+                "1",
+                "assign-professor"
+              ],
+              "query": [
+                {
+                  "key": "subjectAssignmentId",
+                  "value": "5",
+                  "description": "ID de la asignación de profesor a la materia"
+                }
+              ]
+            },
+            "description": "⭐ Nuevo en v2.5.0: Permite asignar un profesor a una inscripción que fue creada sin profesor.\n\nUso: Cuando un estudiante se inscribió a una materia sin profesor asignado, este endpoint permite agregar el profesor posteriormente.\n\nValidaciones:\n- La inscripción debe existir\n- La asignación debe existir\n- La asignación debe ser de la misma materia que la inscripción"
           }
         },
         {

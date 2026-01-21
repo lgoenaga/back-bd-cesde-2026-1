@@ -1,18 +1,18 @@
 # Student Information System - REST API
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)]()
-[![Version](https://img.shields.io/badge/version-2.4.0-blue)]()
+[![Version](https://img.shields.io/badge/version-2.5.0-blue)]()
 [![Java](https://img.shields.io/badge/Java-17-orange)]()
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.1-green)]()
-[![Endpoints](https://img.shields.io/badge/endpoints-269+-success)]()
+[![Endpoints](https://img.shields.io/badge/endpoints-270+-success)]()
 [![API](https://img.shields.io/badge/API-100%25%20Funcional-brightgreen)]()
 [![Pagination](https://img.shields.io/badge/Pagination-Implemented-blue)]()
 
-Sistema de Información Estudiantil completo desarrollado como REST API con Spring Boot, JPA y MySQL con **soporte completo de paginación** y **jerarquía de inscripciones**.
+Sistema de Información Estudiantil completo desarrollado como REST API con Spring Boot, JPA y MySQL con **soporte completo de paginación** y **jerarquía de inscripciones flexible**.
 
 **✅ 100% Funcional desde Frontend - No requiere acceso directo a la base de datos**
 
-Gestiona: Estudiantes, Profesores, Cursos, Niveles, Materias, Períodos Académicos, Grupos, **Inscripciones Jerárquicas** (Curso → Nivel → Materia), **Asignaciones de Profesores**, **Calificaciones**, **Asistencia**, **Usuarios** y **Roles**.
+Gestiona: Estudiantes, Profesores, Cursos, Niveles, Materias, Períodos Académicos, Grupos, **Inscripciones Jerárquicas Flexibles** (Curso → Nivel → Materia con profesor opcional), **Asignaciones de Profesores**, **Calificaciones**, **Asistencia**, **Usuarios** y **Roles**.
 
 ---
 
@@ -90,6 +90,73 @@ Respuesta esperada:
 | Lombok | Latest | Reducción de boilerplate |
 | Maven | 3.6+ | Gestión de dependencias |
 | CORS | Built-in | Cross-Origin Resource Sharing |
+
+---
+
+## 🎉 Cambios Recientes - v2.5.0 (Enero 20, 2026)
+
+### ⭐ Corrección Crítica: Inscripciones Flexibles
+
+**Problema Resuelto:**
+- ❌ **Antes (v2.4.1):** No se podía inscribir a un estudiante a una materia sin que hubiera un profesor asignado
+- ✅ **Ahora (v2.5.0):** La inscripción es flexible - el profesor es opcional
+
+**Cambios en la Base de Datos:**
+```sql
+-- Antes (v2.4.1)
+subject_enrollments (
+    subject_assignment_id BIGINT NOT NULL  -- ❌ Bloqueaba inscripción
+)
+
+-- Ahora (v2.5.0)
+subject_enrollments (
+    subject_id BIGINT NOT NULL,            -- ✅ Materia (obligatorio)
+    subject_assignment_id BIGINT NULL      -- ⚠️ Profesor (opcional)
+)
+```
+
+**Cambios en la API:**
+
+1. **Nuevo formato de Request** (`POST /subject-enrollments`):
+   ```json
+   {
+     "levelEnrollmentId": 1,
+     "subjectId": 1,                    // ⭐ NUEVO: Obligatorio
+     "subjectAssignmentId": 5           // ⚠️ MODIFICADO: Opcional (puede ser null)
+   }
+   ```
+
+2. **Nuevo Endpoint** (`PATCH /subject-enrollments/{id}/assign-professor`):
+   - Permite asignar profesor después de la inscripción inicial
+   - Útil cuando los profesores se asignan posteriormente
+
+3. **Response Actualizado**:
+   - Incluye información de la materia directamente (`subjectId`, `subjectCode`)
+   - Campos de profesor opcionales (`professorName`, `schedule`, `classroom` pueden ser null)
+
+**Beneficios:**
+- ✅ Inscripciones no bloqueadas por procesos administrativos
+- ✅ Separación clara entre proceso académico y administrativo
+- ✅ Mejor experiencia de usuario
+- ✅ Mayor flexibilidad operativa
+
+**Documentación Completa:**
+- Ver: `MIGRATION-subject-enrollments.sql` (script de migración)
+- Ver: `FRONTEND-CLARIFICATION.md` (guía para frontend)
+- Ver: `IMPLEMENTATION-SUMMARY-v2.5.0.md` (resumen técnico)
+
+---
+
+## 📝 Cambios Anteriores
+
+### v2.4.1 (Enero 20, 2026)
+- SubjectAssignmentResponseDTO incluye `levelId` y `levelName`
+- Facilita filtrado de materias por nivel desde frontend
+
+### v2.4.0 (Enero 2026)
+- Agregadas secciones: Level Enrollments y Subject Enrollments
+- Validaciones de jerarquía de inscripciones
+- Validación cruzada: Subject debe pertenecer al Level correcto
 
 ---
 
@@ -691,16 +758,17 @@ Similar a Students:
 - DELETE `/level-enrollments/{id}` - Eliminar inscripción
 - GET `/level-enrollments/count` - Contar inscripciones
 
-### 📚 Subject Enrollments (10 endpoints)
+### 📚 Subject Enrollments (11 endpoints) - ⭐ v2.5.0 Actualizado
 - GET `/subject-enrollments` - Listar inscripciones a materias
 - GET `/subject-enrollments/paged` - ✅ Paginado (recomendado)
 - GET `/subject-enrollments/{id}` - Por ID
 - GET `/subject-enrollments/level-enrollment/{id}` - Por inscripción de nivel
 - GET `/subject-enrollments/subject-assignment/{id}` - Por asignación de materia
 - GET `/subject-enrollments/status/{status}` - Por estado
-- POST `/subject-enrollments` - Crear inscripción a materia
+- POST `/subject-enrollments` - ⭐ Crear inscripción (profesor opcional)
 - PUT `/subject-enrollments/{id}` - Actualizar inscripción
 - PATCH `/subject-enrollments/{id}/status` - Cambiar estado
+- PATCH `/subject-enrollments/{id}/assign-professor` - ⭐ Asignar profesor después
 - DELETE `/subject-enrollments/{id}` - Eliminar inscripción
 - GET `/subject-enrollments/count` - Contar inscripciones
 
@@ -935,18 +1003,39 @@ curl -X POST http://localhost:8080/api/level-enrollments \
   }'
 ```
 
-### Crear Inscripción a Materia
+### Crear Inscripción a Materia (⭐ v2.5.0)
 
 ```bash
+# Con profesor asignado
 curl -X POST http://localhost:8080/api/subject-enrollments \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
     "levelEnrollmentId": 1,
+    "subjectId": 1,
     "subjectAssignmentId": 1,
     "enrollmentDate": "2026-01-20",
     "status": "EN_CURSO"
   }'
+
+# Sin profesor asignado (ahora permitido)
+curl -X POST http://localhost:8080/api/subject-enrollments \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "levelEnrollmentId": 1,
+    "subjectId": 1,
+    "subjectAssignmentId": null,
+    "enrollmentDate": "2026-01-20",
+    "status": "EN_CURSO"
+  }'
+```
+
+### Asignar Profesor Después (⭐ Nuevo en v2.5.0)
+
+```bash
+curl -X PATCH "http://localhost:8080/api/subject-enrollments/1/assign-professor?subjectAssignmentId=5" \
+  -H "Authorization: Bearer $TOKEN"
 ```
 
 ---
